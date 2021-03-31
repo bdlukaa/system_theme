@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:system_theme/system_theme.dart';
@@ -9,12 +11,28 @@ void main() {
 
   setUp(() {
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      return '42';
+      switch (methodCall.method) {
+        case kGetSystemAccentColorMethod:
+          return kDefaultSystemAccentColor.toString();
+        case kGetDarkModeMethod:
+          return false;
+        default:
+          return null;
+      }
     });
+  });
+
+  test('Get accent color', () async {
+    final color = await channel.invokeMethod(kGetSystemAccentColorMethod);
+    expect(Color(0xff00b7c3).toString(), color);
+  });
+
+  test('Check dark mode', () async {
+    final darkMode = await channel.invokeMethod(kGetDarkModeMethod);
+    expect(false, darkMode);
   });
 
   tearDown(() {
     channel.setMockMethodCallHandler(null);
   });
-
 }

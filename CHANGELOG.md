@@ -1,3 +1,5 @@
-## 0.0.1
+Date format: DD/MM/YYYY
 
-* TODO: Describe initial release.
+## [1.0.0] - 31/03/2021
+
+- Initial Release

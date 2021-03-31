@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-
-import 'package:flutter/services.dart';
 import 'package:system_theme/system_theme.dart';
 
 void main() {
@@ -15,22 +12,20 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
-  final accent = SystemTheme.accent;
-
   @override
   void initState() {
     super.initState();
-    init();
-  }
-
-  void init() async {
-    print(accent.accent);
+    SystemTheme.darkMode.then((value) {
+      print(value);
+    });
+    print(SystemTheme.accentInstance.accent);
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        backgroundColor: SystemTheme.accentInstance.accent,
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),

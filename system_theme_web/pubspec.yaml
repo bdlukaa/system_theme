@@ -1,0 +1,30 @@
+name: system_theme_web
+description: system_theme Implementation for the Web
+version: 0.0.1
+author:
+homepage:
+
+publish_to: "none"
+
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+  flutter: ">=1.20.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+  system_theme:
+    path: ../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  plugin:
+    platforms:
+      web:
+        pluginClass: SystemThemeWeb
+        fileName: system_theme_web.dart

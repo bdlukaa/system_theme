@@ -61,7 +61,7 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_web_plugins:
-    dependency: transitive
+    dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
@@ -126,13 +126,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
-  system_theme_web:
+  system_theme:
     dependency: "direct main"
     description:
-      path: system_theme_web
+      path: ".."
       relative: true
     source: path
-    version: "0.0.1"
+    version: "1.0.0"
   term_glyph:
     dependency: transitive
     description:
