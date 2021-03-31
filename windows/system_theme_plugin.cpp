@@ -14,6 +14,8 @@
 #include <memory>
 #include <sstream>
 
+#include <SystemTheme/Windows10Colors-master/Windows10Colors/Windows10Colors.cpp>
+
 flutter::EncodableMap getRGBA(windows10colors::RGBA _color) {
     /* Converts windows10colors::RGBA to Flutter readable map of following structure.
      *
