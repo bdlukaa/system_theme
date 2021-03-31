@@ -11,6 +11,7 @@ include_directories(
   "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
+add_compile_definitions("NOMINMAX")
 set(SYSTEM_THEME_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/SystemTheme")
 set(SYSTEM_THEME_DEPENDENCY "https://github.com/res2k/Windows10Colors/archive/master.zip")
 set(SYSTEM_THEME_ARCHIVE "${CMAKE_CURRENT_SOURCE_DIR}/SystemTheme/Windows10Colors.zip")

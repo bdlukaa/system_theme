@@ -1,20 +1,12 @@
+#include <map>
+
 #include "include/system_theme/system_theme_plugin.h"
-
-// This must be included before many other Windows headers.
-#include <windows.h>
-
-// For getPlatformVersion; remove unless needed for your plugin implementation.
-#include <VersionHelpers.h>
-
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar_windows.h>
 #include <flutter/standard_method_codec.h>
 
-#include <map>
-#include <memory>
-#include <sstream>
-
 #include <SystemTheme/Windows10Colors-master/Windows10Colors/Windows10Colors.cpp>
+
 
 flutter::EncodableMap getRGBA(windows10colors::RGBA _color) {
     /* Converts windows10colors::RGBA to Flutter readable map of following structure.
@@ -38,47 +30,38 @@ flutter::EncodableMap getRGBA(windows10colors::RGBA _color) {
 
 namespace {
 
-class SystemThemePlugin : public flutter::Plugin {
- public:
-  static void RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar);
+    class SystemThemePlugin : public flutter::Plugin {
+    public:
+        static void RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar);
 
-  SystemThemePlugin();
+        SystemThemePlugin();
 
-  virtual ~SystemThemePlugin();
+        virtual ~SystemThemePlugin();
 
- private:
-  // Called when a method is called on this plugin's channel from Dart.
-  void HandleMethodCall(
-      const flutter::MethodCall<flutter::EncodableValue> &method_call,
-      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
-};
+        private:
+        void HandleMethodCall(const flutter::MethodCall<flutter::EncodableValue> &method_call, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+    };
 
-// static
-void SystemThemePlugin::RegisterWithRegistrar(
-    flutter::PluginRegistrarWindows *registrar) {
-  auto channel =
-      std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
-          registrar->messenger(), "system_theme",
-          &flutter::StandardMethodCodec::GetInstance());
+    void SystemThemePlugin::RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar) {
+    auto channel = std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(registrar->messenger(), "system_theme", &flutter::StandardMethodCodec::GetInstance());
 
-  auto plugin = std::make_unique<SystemThemePlugin>();
+    auto plugin = std::make_unique<SystemThemePlugin>();
 
-  channel->SetMethodCallHandler(
-      [plugin_pointer = plugin.get()](const auto &call, auto result) {
-        plugin_pointer->HandleMethodCall(call, std::move(result));
-      });
+    channel->SetMethodCallHandler(
+        [plugin_pointer = plugin.get()](const auto &call, auto result) {
+            plugin_pointer->HandleMethodCall(call, std::move(result));
+        }
+    );
 
-  registrar->AddPlugin(std::move(plugin));
-}
+    registrar->AddPlugin(std::move(plugin));
+    }
 
-SystemThemePlugin::SystemThemePlugin() {}
+    SystemThemePlugin::SystemThemePlugin() {}
 
-SystemThemePlugin::~SystemThemePlugin() {}
+    SystemThemePlugin::~SystemThemePlugin() {}
 
-void SystemThemePlugin::HandleMethodCall(
-    const flutter::MethodCall<flutter::EncodableValue> &method_call,
-    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-  if (method_call.method_name() == "SystemTheme.darkMode") {
+    void SystemThemePlugin::HandleMethodCall(const flutter::MethodCall<flutter::EncodableValue> &method_call, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
+        if (method_call.method_name() == "SystemTheme.darkMode") {
             bool darkMode = false;
             windows10colors::GetDarkModeEnabled(darkMode);
             result->Success(flutter::EncodableValue(darkMode));
@@ -113,13 +96,12 @@ void SystemThemePlugin::HandleMethodCall(
         else {
             result->NotImplemented();
         }
+    }
+
 }
 
-}  // namespace
-
-void SystemThemePluginRegisterWithRegistrar(
-    FlutterDesktopPluginRegistrarRef registrar) {
-  SystemThemePlugin::RegisterWithRegistrar(
-      flutter::PluginRegistrarManager::GetInstance()
-          ->GetRegistrar<flutter::PluginRegistrarWindows>(registrar));
+void SystemThemePluginRegisterWithRegistrar(FlutterDesktopPluginRegistrarRef registrar) {
+    SystemThemePlugin::RegisterWithRegistrar(
+        flutter::PluginRegistrarManager::GetInstance()->GetRegistrar<flutter::PluginRegistrarWindows>(registrar)
+    );
 }
