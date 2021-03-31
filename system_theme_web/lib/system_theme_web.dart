@@ -3,7 +3,6 @@ import 'dart:html' as html;
 
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
-import 'package:system_theme/system_theme.dart';
 
 /// A web implementation of the SystemTheme plugin.
 class SystemThemeWeb {
@@ -23,9 +22,9 @@ class SystemThemeWeb {
   /// https://flutter.dev/go/federated-plugins
   Future<dynamic> handleMethodCall(MethodCall call) async {
     switch (call.method) {
-      case kGetDarkModeMethod:
+      case 'SystemTheme.darkMode':
         return html.window.matchMedia('(prefers-color-scheme: dark)').matches;
-      case kGetSystemAccentColorMethod:
+      case 'SystemTheme.accentColor':
         // final e = html.document.getElementById("body");
         // e?.style?.backgroundColor = "highlight";
         // print(e?.style?.backgroundColor);

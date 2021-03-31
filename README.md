@@ -26,7 +26,8 @@
 
 ### Platoforms
 
-✔️ Windows
+✔️ Windows\
+✔️ Web
 
 ## Usage
 

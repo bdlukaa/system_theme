@@ -143,9 +143,9 @@ packages:
   system_theme_web:
     dependency: transitive
     description:
-      path: "../system_theme_web"
-      relative: true
-    source: path
+      name: system_theme_web
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.0.1"
   term_glyph:
     dependency: transitive

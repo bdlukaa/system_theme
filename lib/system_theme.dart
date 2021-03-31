@@ -30,10 +30,17 @@ class SystemTheme {
   ///
   /// This is available for the following platforms:
   ///   - Windows
+  ///   - Web
+  /// 
+  /// It returns `false` for unsupported platforms
   static Future<bool> get darkMode async {
+    Future<bool> getDarkMode() async {
+      return (await _channel.invokeMethod<bool>(kGetDarkModeMethod)) ?? false;
+    }
+    if (kIsWeb) return getDarkMode();
     switch (defaultTargetPlatform) {
       case TargetPlatform.windows:
-        return (await _channel.invokeMethod<bool>(kGetDarkModeMethod)) ?? false;
+        return getDarkMode();
       default:
         return false;
     }
