@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:system_theme/system_theme.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemTheme.accentInstance.load();
   runApp(MyApp());
 }
 
@@ -11,7 +13,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   void initState() {
     super.initState();
@@ -26,9 +27,6 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         backgroundColor: SystemTheme.accentInstance.accent,
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
       ),
     );
   }

@@ -25,9 +25,25 @@ class SystemThemeWeb {
       case 'SystemTheme.darkMode':
         return html.window.matchMedia('(prefers-color-scheme: dark)').matches;
       case 'SystemTheme.accentColor':
-        // final e = html.document.getElementById("body");
-        // e?.style?.backgroundColor = "highlight";
-        // print(e?.style?.backgroundColor);
+        final e = html.document.body;
+        final currentBackgroundColor = e?.style.backgroundColor;
+        e?.style.backgroundColor = "highlight";
+        String? backgroundColor = e?.getComputedStyle().backgroundColor;
+        e?.style.backgroundColor = currentBackgroundColor;
+        if (backgroundColor != null) {
+          backgroundColor = backgroundColor
+              .replaceAll('rgb(', '')
+              .replaceAll(')', '')
+              .replaceAll(' ', '');
+          final rgb = backgroundColor.split(',');
+          return {
+            'accent': {
+              'R': int.parse(rgb[0]),
+              'G': int.parse(rgb[1]),
+              'B': int.parse(rgb[2]),
+            }
+          };
+        }
         return null;
       default:
         throw PlatformException(

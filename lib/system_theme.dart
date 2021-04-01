@@ -22,24 +22,27 @@ class SystemTheme {
   ///
   /// This is available for the following platforms:
   ///   - Windows
-  /// 
+  ///
   /// It returns [kDefaultSystemAccentColor] for unsupported platforms
-  static final SystemAccentColor accentInstance = SystemAccentColor(kDefaultSystemAccentColor)..load();
+  static final SystemAccentColor accentInstance =
+      SystemAccentColor(kDefaultSystemAccentColor)..load();
 
   /// Wheter the dark mode is enabled or not. Defaults to `false`
   ///
   /// This is available for the following platforms:
   ///   - Windows
   ///   - Web
-  /// 
+  ///
   /// It returns `false` for unsupported platforms
   static Future<bool> get darkMode async {
     Future<bool> getDarkMode() async {
       return (await _channel.invokeMethod<bool>(kGetDarkModeMethod)) ?? false;
     }
+
     if (kIsWeb) return getDarkMode();
     switch (defaultTargetPlatform) {
       case TargetPlatform.windows:
+      case TargetPlatform.android:
         return getDarkMode();
       default:
         return false;
@@ -49,10 +52,9 @@ class SystemTheme {
 
 /// Defines accent colors & its variants on Windows.
 /// Colors are cached by default, call [SystemAccentColor.load] to the updated colors.
-/// 
+///
 /// It returns [SystemAccentColor.defaultAccentColor] if `SystemAccentColor.load` fails
 class SystemAccentColor {
-
   final Color defaultAccentColor;
 
   /// Base accent color.
@@ -62,16 +64,16 @@ class SystemAccentColor {
   late Color light;
 
   /// Lighter shade.
-  late Color lighter ;
+  late Color lighter;
 
   /// Lighest shade.
   late Color lightest;
 
   /// Darkest shade.
-  late Color dark ;
+  late Color dark;
 
   /// Darker shade.
-  late Color darker ;
+  late Color darker;
 
   /// Darkest shade.
   late Color darkest;
@@ -88,18 +90,19 @@ class SystemAccentColor {
 
   /// Updates the fetched accent colors on Windows.
   Future<void> load() async {
-    dynamic colors = await _channel.invokeMethod(kGetSystemAccentColorMethod);
+    var colors = await _channel.invokeMethod(kGetSystemAccentColorMethod);
     if (colors == null) return;
-    accent = _retrieve(colors['accent']);
-    light = _retrieve(colors['light']);
-    lighter = _retrieve(colors['lighter']);
-    lightest = _retrieve(colors['lightest']);
-    dark = _retrieve(colors['dark']);
-    darker = _retrieve(colors['darker']);
-    darkest = _retrieve(colors['darkest']);
+    accent = _retrieve(colors['accent'])!;
+    light = _retrieve(colors['light']) ?? accent;
+    lighter = _retrieve(colors['lighter']) ?? accent;
+    lightest = _retrieve(colors['lightest']) ?? accent;
+    dark = _retrieve(colors['dark']) ?? accent;
+    darker = _retrieve(colors['darker']) ?? accent;
+    darkest = _retrieve(colors['darkest']) ?? accent;
   }
 
-  Color _retrieve(dynamic map) {
+  Color? _retrieve(dynamic? map) {
+    if (map == null) return null;
     return Color.fromRGBO(
       map['R'],
       map['G'],

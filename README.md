@@ -26,8 +26,9 @@
 
 ### Platoforms
 
-✔️ Windows\
-✔️ Web
+✔️ Android\
+✔️ Web\
+✔️ Windows (Thanks to [@alexmercerind](https://github.com/alexmercerind))
 
 ## Usage
 
@@ -48,10 +49,22 @@ final accentColor = SystemTheme.accentInstance.accent;
 To reload the accent colors, use the method `load()`:
 
 ```dart
-SystemTheme.accentInstance.load();
+await SystemTheme.accentInstance.load();
+```
+
+You can load the colors on main, so the colors can't be wrong at runtime:
+
+```dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemTheme.accentInstance.load();
+  runApp(MyApp());
+}
 ```
 
 ### Check dark mode
+
+Use the getter `SystemTheme.darkMode` to check if the device is in dark mode.
 
 ```dart
 final darkMode = await SystemTheme.darkMode;

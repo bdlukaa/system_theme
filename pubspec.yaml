@@ -1,15 +1,15 @@
 name: system_theme
 description: A plugin to get the current system theme info
 version: 1.0.0
-author:
-homepage:
+repository: https://github.com/bdlukaa/system_theme
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
   flutter: ">=1.20.0"
 
 dependencies:
-  system_theme_web: ^0.0.1
+  system_theme_web: ^0.0.2
+    # path: system_theme_web/
   flutter:
     sdk: flutter
 
@@ -22,8 +22,8 @@ flutter:
     platforms:
       windows:
         pluginClass: SystemThemePlugin
-    android:
-      package: com.bruno.system_theme
-      pluginClass: SystemThemePlugin
-    web:
-      default_package: system_theme_web
+      android:
+        package: com.bruno.system_theme
+        pluginClass: SystemThemePlugin
+      web:
+        default_package: system_theme_web

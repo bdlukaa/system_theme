@@ -1,6 +1,6 @@
 name: system_theme_web
-description: system_theme Implementation for the Web
-version: 0.0.1
+description: system_theme implementation for the Web
+version: 0.0.2
 homepage: https://github.com/bdlukaa/system_theme/tree/master/system_theme_web
 
 environment:
