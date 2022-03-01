@@ -24,7 +24,7 @@
   </p>
 </div>
 
-### Platoforms
+### Platforms
 
 ✔️ Android\
 ✔️ Web\
