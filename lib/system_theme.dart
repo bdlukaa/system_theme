@@ -82,6 +82,8 @@ class SystemAccentColor extends Equatable{
   /// Darkest shade.
   late Color darkest;
 
+  late bool darkModeEnabled;
+
   SystemAccentColor(this.defaultAccentColor) {
     accent = defaultAccentColor;
     light = defaultAccentColor;
@@ -90,6 +92,7 @@ class SystemAccentColor extends Equatable{
     dark = defaultAccentColor;
     darker = defaultAccentColor;
     darkest = defaultAccentColor;
+    darkModeEnabled=false;
   }
 
   SystemAccentColor.fromMap(dynamic colors){
@@ -101,6 +104,7 @@ class SystemAccentColor extends Equatable{
     dark = _retrieve(colors['dark']) ?? accent;
     darker = _retrieve(colors['darker']) ?? accent;
     darkest = _retrieve(colors['darkest']) ?? accent;
+    darkModeEnabled=colors['darkModeEnabled'];
   }
 
   /// Updates the fetched accent colors on Windows.
@@ -114,6 +118,7 @@ class SystemAccentColor extends Equatable{
     dark = _retrieve(colors['dark']) ?? accent;
     darker = _retrieve(colors['darker']) ?? accent;
     darkest = _retrieve(colors['darkest']) ?? accent;
+    darkModeEnabled=colors['darkModeEnabled'] ?? false;
   }
 
 
@@ -142,5 +147,5 @@ class SystemAccentColor extends Equatable{
 
   @override
   // TODO: implement props
-  List<Object?> get props => [accent,light,lighter,lightest,dark,darker,darkest];
+  List<Object?> get props => [accent,light,lighter,lightest,dark,darker,darkest,darkModeEnabled];
 }

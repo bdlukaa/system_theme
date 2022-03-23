@@ -32,8 +32,7 @@ flutter::EncodableMap getRGBA(windows10colors::RGBA _color) {
 
 namespace {
 
-     LRESULT CALLBACK MyWndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
-     WNDPROC oldProc;
+
 
 
 
@@ -95,22 +94,29 @@ private:
     class SystemThemePlugin : public flutter::Plugin {
     public:
         static MyStreamHandler<> *RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar);
+        SystemThemePlugin(flutter::PluginRegistrarWindows* registrar);
+
         MyStreamHandler<> *m_handler;
-        SystemThemePlugin();
+        // SystemThemePlugin();
 
         virtual ~SystemThemePlugin();
 
 
         private:
+        flutter::PluginRegistrarWindows* registrar;
         void HandleMethodCall(const flutter::MethodCall<flutter::EncodableValue> &method_call, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
         std::unique_ptr<flutter::EventChannel<flutter::EncodableValue>> m_event_channel;
+        std::optional<LRESULT> HandleWindowProc(HWND hWnd,
+                                                                       UINT message,
+                                                                       WPARAM wParam,
+                                                                       LPARAM lParam);
     };
 
-
+     int window_proc_id = -1;
     MyStreamHandler<> *SystemThemePlugin::RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar) {
     auto channel = std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(registrar->messenger(), "system_theme", &flutter::StandardMethodCodec::GetInstance());
 
-    auto plugin = std::make_unique<SystemThemePlugin>();
+    auto plugin = std::make_unique<SystemThemePlugin>(registrar);
 
     channel->SetMethodCallHandler(
         [plugin_pointer = plugin.get()](const auto &call, auto result) {
@@ -128,23 +134,45 @@ private:
       std::unique_ptr<flutter::StreamHandler<flutter::EncodableValue>> _ptr {_obj_stm_handle};
       plugin->m_event_channel->SetStreamHandler (std::move (_ptr));
 
-
+      plugin->registrar=registrar;
       registrar->AddPlugin(std::move(plugin));
-       HWND handle = GetActiveWindow();
-       oldProc = reinterpret_cast<WNDPROC>(GetWindowLongPtr(handle, GWLP_WNDPROC));
-       SetWindowLongPtr(handle, GWLP_WNDPROC, (LONG_PTR)MyWndProc);
+       /* HWND handle = GetActiveWindow();
+        window_proc_id = registrar->RegisterTopLevelWindowProcDelegate(
+             plugin->(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+               return HandleWindowProc(hWnd, message, wParam, lParam);
+             });
        OutputDebugString(L"****** SYSTEM_THEME_PLUGIN ******: Message Handle Registered");
+       */
+
        return _handler;
     }
 
-    SystemThemePlugin::SystemThemePlugin() {}
+SystemThemePlugin::SystemThemePlugin(
+    flutter::PluginRegistrarWindows* registrar)
+    : registrar(registrar) {
+      window_proc_id = registrar->RegisterTopLevelWindowProcDelegate(
+      [this](HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+        return HandleWindowProc(hWnd, message, wParam, lParam);
+      });
+      OutputDebugString(L"****** SYSTEM_THEME_PLUGIN ******: Message Handle Registered");
+}
 
-    SystemThemePlugin::~SystemThemePlugin() {}
+SystemThemePlugin::~SystemThemePlugin() {
+  registrar->UnregisterTopLevelWindowProcDelegate(window_proc_id);
+}
+
+
+    // SystemThemePlugin::SystemThemePlugin() {}
+
+
 
     flutter::EncodableMap getAccentColor(){
-     windows10colors::AccentColor accentColors;
+                windows10colors::AccentColor accentColors;
                 windows10colors::GetAccentColor(accentColors);
                 flutter::EncodableMap colors = flutter::EncodableMap();
+                bool darkMode;
+                windows10colors::GetAppDarkModeEnabled(darkMode);
+                colors[flutter::EncodableValue("darkModeEnabled")]=flutter::EncodableValue(darkMode);
                 colors[flutter::EncodableValue("accent")] = flutter::EncodableValue(
                     getRGBA(accentColors.accent)
                 );
@@ -170,8 +198,12 @@ private:
     }
 
   MyStreamHandler<> *_m_handler=nullptr;
-    LRESULT CALLBACK MyWndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
+    std::optional<LRESULT> SystemThemePlugin::HandleWindowProc(HWND hWnd,
+                                                                   UINT iMessage,
+                                                                   WPARAM wParam,
+                                                                   LPARAM lParam)
           {
+           std::optional<LRESULT> result = std::nullopt;
             if (iMessage == WM_SETTINGCHANGE)
             {
                OutputDebugString(L"****** SYSTEM_THEME_PLUGIN ******: WM_SETTINGCHANGE called");
@@ -180,7 +212,7 @@ private:
                           if (_m_handler!=nullptr) {
                            OutputDebugString(L"- Theme Has Changed\n");
                            _m_handler->on_callback (getAccentColor());
-
+                           return true;
                           }
                           else
                           {
@@ -196,7 +228,7 @@ private:
 
             }
 
-            return oldProc(hWnd, iMessage, wParam, lParam);
+            return result;
           }
 
     void SystemThemePlugin::HandleMethodCall(const flutter::MethodCall<flutter::EncodableValue> &method_call, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
@@ -226,3 +258,4 @@ void SystemThemePluginRegisterWithRegistrar(FlutterDesktopPluginRegistrarRef reg
         flutter::PluginRegistrarManager::GetInstance()->GetRegistrar<flutter::PluginRegistrarWindows>(registrar));
 
 }
+

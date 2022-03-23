@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3ab5b433-e6ad-4cef-8533-25c79719f727" name="Default Changelist" comment="Listen Theme Switching Events">
+    <list default="true" id="3ab5b433-e6ad-4cef-8533-25c79719f727" name="Default Changelist" comment="Debounce Multiple Switching events">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/system_theme.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/system_theme.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/windows/system_theme_plugin.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/windows/system_theme_plugin.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,7 +55,14 @@
       <option name="project" value="LOCAL" />
       <updated>1648056881555</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Debounce Multiple Switching events">
+      <created>1648061298715</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1648061298715</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -73,9 +81,22 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Listen Theme Switching Events" />
-    <option name="LAST_COMMIT_MESSAGE" value="Listen Theme Switching Events" />
+    <MESSAGE value="Debounce Multiple Switching events" />
+    <option name="LAST_COMMIT_MESSAGE" value="Debounce Multiple Switching events" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/system_theme_widget.dart</url>
+          <line>36</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
