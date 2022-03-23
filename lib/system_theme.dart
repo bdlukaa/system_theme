@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:equatable/equatable.dart';
 
 part 'system_theme_widget.dart';
 
@@ -57,7 +58,7 @@ class SystemTheme {
 /// Colors are cached by default, call [SystemAccentColor.load] to the updated colors.
 ///
 /// It returns [SystemAccentColor.defaultAccentColor] if `SystemAccentColor.load` fails
-class SystemAccentColor {
+class SystemAccentColor extends Equatable{
   late final Color defaultAccentColor;
 
   /// Base accent color.
@@ -138,4 +139,8 @@ class SystemAccentColor {
       1.0,
     );
   }
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [accent,light,lighter,lightest,dark,darker,darkest];
 }
