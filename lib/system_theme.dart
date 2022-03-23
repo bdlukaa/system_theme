@@ -1,6 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
+
+part 'system_theme_widget.dart';
 
 /// Default system accent color.
 const kDefaultSystemAccentColor = Color(0xff00b7c3);
@@ -55,7 +58,7 @@ class SystemTheme {
 ///
 /// It returns [SystemAccentColor.defaultAccentColor] if `SystemAccentColor.load` fails
 class SystemAccentColor {
-  final Color defaultAccentColor;
+  late final Color defaultAccentColor;
 
   /// Base accent color.
   late Color accent;
@@ -88,6 +91,17 @@ class SystemAccentColor {
     darkest = defaultAccentColor;
   }
 
+  SystemAccentColor.fromMap(dynamic colors){
+    defaultAccentColor=kDefaultSystemAccentColor;
+    accent = _retrieve(colors['accent']) ?? defaultAccentColor;
+    light = _retrieve(colors['light']) ?? accent;
+    lighter = _retrieve(colors['lighter']) ?? accent;
+    lightest = _retrieve(colors['lightest']) ?? accent;
+    dark = _retrieve(colors['dark']) ?? accent;
+    darker = _retrieve(colors['darker']) ?? accent;
+    darkest = _retrieve(colors['darkest']) ?? accent;
+  }
+
   /// Updates the fetched accent colors on Windows.
   Future<void> load() async {
     var colors = await _channel.invokeMethod(kGetSystemAccentColorMethod);
@@ -100,6 +114,20 @@ class SystemAccentColor {
     darker = _retrieve(colors['darker']) ?? accent;
     darkest = _retrieve(colors['darkest']) ?? accent;
   }
+
+
+
+  Future<void> loadFrom(dynamic colors)  async {
+    if (colors == null) return;
+    accent = _retrieve(colors['accent'])!;
+    light = _retrieve(colors['light']) ?? accent;
+    lighter = _retrieve(colors['lighter']) ?? accent;
+    lightest = _retrieve(colors['lightest']) ?? accent;
+    dark = _retrieve(colors['dark']) ?? accent;
+    darker = _retrieve(colors['darker']) ?? accent;
+    darkest = _retrieve(colors['darkest']) ?? accent;
+  }
+
 
   Color? _retrieve(dynamic? map) {
     if (map == null) return null;
