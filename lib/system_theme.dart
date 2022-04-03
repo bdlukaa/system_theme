@@ -14,7 +14,7 @@ const MethodChannel _channel = MethodChannel('system_theme');
 
 /// Class to return current system theme state on Windows.
 ///
-/// [SystemTheme.darkMode] returns whether currently dark mode is enabled or not.
+/// [SystemTheme.isDarkMode] returns whether currently dark mode is enabled or not.
 ///
 /// [SystemTheme.accentColor] returns the current accent color as [SystemAccentColor].
 ///
@@ -25,7 +25,7 @@ class SystemTheme {
   ///   - Windows
   ///
   /// It returns [kDefaultSystemAccentColor] for unsupported platforms
-  static final SystemAccentColor accentInstance =
+  static final SystemAccentColor accentColor =
       SystemAccentColor(kDefaultSystemAccentColor)..load();
 
   /// Wheter the dark mode is enabled or not. Defaults to `false`
@@ -40,7 +40,7 @@ class SystemTheme {
 /// Colors are cached by default, call [SystemAccentColor.load] to the updated colors.
 ///
 /// It returns [SystemAccentColor.defaultAccentColor] if `SystemAccentColor.load` fails
-class SystemAccentColor {
+class SystemAccentColor extends Color {
   final Color defaultAccentColor;
 
   /// Base accent color.
@@ -64,7 +64,7 @@ class SystemAccentColor {
   /// Darkest shade.
   late Color darkest;
 
-  SystemAccentColor(this.defaultAccentColor) {
+  SystemAccentColor(this.defaultAccentColor) : super(defaultAccentColor.alpha) {
     accent = defaultAccentColor;
     light = defaultAccentColor;
     lighter = defaultAccentColor;

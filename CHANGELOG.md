@@ -1,8 +1,10 @@
 Date format: DD/MM/YYYY
 
-## [2.0.0] - 03/04/2022
+## [2.0.0] - Breaking Changes - 03/04/2022
 
-- `darkMode` was renamed to `isDarkMode`
+- **BREAKING** `darkMode` was renamed to `isDarkMode`, and it's now sync
+- **BREAKING** `accentInstance` was renamed to `accentColor`
+- `SystemAccentColor` is now an extension of `Color`
 
 ## [1.0.1] - 12/05/2021
 

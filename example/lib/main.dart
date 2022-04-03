@@ -3,7 +3,7 @@ import 'package:system_theme/system_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemTheme.accentInstance.load();
+  await SystemTheme.accentColor.load();
   runApp(MaterialApp(home: MyApp()));
 }
 
@@ -16,19 +16,19 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    print(SystemTheme.accentInstance.accent);
+    print(SystemTheme.accentColor.accent);
   }
 
   @override
   Widget build(BuildContext context) {
     final colors = [
-      SystemTheme.accentInstance.lightest,
-      SystemTheme.accentInstance.lighter,
-      SystemTheme.accentInstance.light,
-      SystemTheme.accentInstance.accent,
-      SystemTheme.accentInstance.dark,
-      SystemTheme.accentInstance.darker,
-      SystemTheme.accentInstance.darkest,
+      SystemTheme.accentColor.lightest,
+      SystemTheme.accentColor.lighter,
+      SystemTheme.accentColor.light,
+      SystemTheme.accentColor.accent,
+      SystemTheme.accentColor.dark,
+      SystemTheme.accentColor.darker,
+      SystemTheme.accentColor.darkest,
     ];
     return Scaffold(
       body: Column(
