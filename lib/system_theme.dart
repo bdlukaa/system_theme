@@ -99,4 +99,36 @@ class SystemAccentColor {
     if (map == null) return null;
     return Color.fromRGBO(map['R'], map['G'], map['B'], 1.0);
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is SystemAccentColor &&
+        other.defaultAccentColor == defaultAccentColor &&
+        other.accent == accent &&
+        other.light == light &&
+        other.lighter == lighter &&
+        other.lightest == lightest &&
+        other.dark == dark &&
+        other.darker == darker &&
+        other.darkest == darkest;
+  }
+
+  @override
+  int get hashCode {
+    return defaultAccentColor.hashCode ^
+        accent.hashCode ^
+        light.hashCode ^
+        lighter.hashCode ^
+        lightest.hashCode ^
+        dark.hashCode ^
+        darker.hashCode ^
+        darkest.hashCode;
+  }
+
+  @override
+  String toString() {
+    return 'SystemAccentColor(defaultAccentColor: $defaultAccentColor, accent: $accent, light: $light, lighter: $lighter, lightest: $lightest, dark: $dark, darker: $darker, darkest: $darkest)';
+  }
 }
