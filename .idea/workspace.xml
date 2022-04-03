@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3ab5b433-e6ad-4cef-8533-25c79719f727" name="Default Changelist" comment="Debounce Multiple Switching events">
+    <list default="true" id="3ab5b433-e6ad-4cef-8533-25c79719f727" name="Default Changelist" comment="Fixed Wndproc Handler, du to Clash with windows_manager Plugin">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/system_theme.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/system_theme.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/windows/system_theme_plugin.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/windows/system_theme_plugin.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,7 +60,14 @@
       <option name="project" value="LOCAL" />
       <updated>1648061298715</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Fixed Wndproc Handler, du to Clash with windows_manager Plugin">
+      <created>1648078260160</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1648078260160</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -86,7 +91,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Listen Theme Switching Events" />
     <MESSAGE value="Debounce Multiple Switching events" />
-    <option name="LAST_COMMIT_MESSAGE" value="Debounce Multiple Switching events" />
+    <MESSAGE value="Fixed Wndproc Handler, du to Clash with windows_manager Plugin" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed Wndproc Handler, du to Clash with windows_manager Plugin" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
