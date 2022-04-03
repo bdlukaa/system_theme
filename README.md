@@ -10,25 +10,18 @@
     <a title="Github License">
       <img src="https://img.shields.io/github/license/bdlukaa/system_theme" />
     </a>
-    <a title="PRs are welcome">
-      <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" />
-    </a>
   </p>
   <p align="center">
-    <a title="Buy me a coffee" href="https://www.buymeacoffee.com/bdlukaa">
-      <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=bdlukaa&button_colour=FF5F5F&font_colour=ffffff&font_family=Lato&outline_colour=000000&coffee_colour=FFDD00">
-    </a>
-  </p>
-  <p align="center">
-  A plugin to get the current system theme info
+  A flutter plugin to get the current system theme information
   </p>
 </div>
 
 ### Platforms
 
-✔️ Android\
-✔️ Web\
-✔️ Windows (Thanks to [@alexmercerind](https://github.com/alexmercerind))
+| Feature          | Android | iOS | Web | Windows | Linux |
+| ---------------- | ------- | --- | --- | ------- | ----- |
+| Get accent color | ✔️      |     | ✔️  | ✔️      |       |
+| Get dark mode    | ✔️      | ✔️  | ✔️  | ✔️      |       |
 
 ## Usage
 
@@ -64,12 +57,16 @@ void main() async {
 
 ### Check dark mode
 
-Use the getter `SystemTheme.darkMode` to check if the device is in dark mode.
+Use the getter `SystemTheme.isDarkMode` to check if the device is in dark mode.
 
 ```dart
-final darkMode = await SystemTheme.darkMode;
+final darkMode = SystemTheme.darkMode;
 ```
 
 # Contribution
 
 Feel free to [open an issue](https://github.com/bdlukaa/system_theme/issues/new) if you find an error or [make pull requests](https://github.com/bdlukaa/system_theme/pulls).
+
+## Acknowlegments
+
+- [@alexmercerind](https://github.com/alexmercerind) for the Windows implementation
