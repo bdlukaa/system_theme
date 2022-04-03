@@ -70,10 +70,14 @@ Use the getter `SystemTheme.isDarkMode` to check if the device is in dark mode.
 final darkMode = SystemTheme.darkMode;
 ```
 
-# Contribution
+## Sponsoring
+
+<a href="https://www.patreon.com/bePatron?u=50324277" data-patreon-widget-type="become-patron-button">Become a Patron!</a><script async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script>
+
+## Contribution
 
 Feel free to [open an issue](https://github.com/bdlukaa/system_theme/issues/new) if you find an error or [make pull requests](https://github.com/bdlukaa/system_theme/pulls).
 
-## Acknowlegments
+### Acknowlegments
 
 - [@alexmercerind](https://github.com/alexmercerind) for the Windows implementation
