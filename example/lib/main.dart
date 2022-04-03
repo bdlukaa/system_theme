@@ -16,9 +16,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    SystemTheme.darkMode.then((value) {
-      print(value);
-    });
     print(SystemTheme.accentInstance.accent);
   }
 

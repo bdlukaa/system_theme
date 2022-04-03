@@ -1,4 +1,7 @@
 import 'dart:ui';
+import 'dart:ui' as ui;
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -29,24 +32,9 @@ class SystemTheme {
 
   /// Wheter the dark mode is enabled or not. Defaults to `false`
   ///
-  /// This is available for the following platforms:
-  ///   - Windows
-  ///   - Web
-  ///
   /// It returns `false` for unsupported platforms
-  static Future<bool> get darkMode async {
-    Future<bool> getDarkMode() async {
-      return (await _channel.invokeMethod<bool>(kGetDarkModeMethod)) ?? false;
-    }
-
-    if (kIsWeb) return getDarkMode();
-    switch (defaultTargetPlatform) {
-      case TargetPlatform.windows:
-      case TargetPlatform.android:
-        return getDarkMode();
-      default:
-        return false;
-    }
+  static bool get isDarkMode {
+    return ui.window.platformBrightness == Brightness.dark;
   }
 }
 
@@ -90,7 +78,9 @@ class SystemAccentColor {
 
   /// Updates the fetched accent colors on Windows.
   Future<void> load() async {
-    var colors = await _channel.invokeMethod(kGetSystemAccentColorMethod);
+    WidgetsFlutterBinding.ensureInitialized();
+
+    final colors = await _channel.invokeMethod(kGetSystemAccentColorMethod);
     if (colors == null) return;
     accent = _retrieve(colors['accent'])!;
     light = _retrieve(colors['light']) ?? accent;
