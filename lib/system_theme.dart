@@ -14,15 +14,18 @@ const MethodChannel _channel = MethodChannel('system_theme');
 
 /// Class to return current system theme state on Windows.
 ///
-/// [SystemTheme.isDarkMode] returns whether currently dark mode is enabled or not.
+/// [SystemTheme.isDarkMode] returns whether currently dark mode is enabled or
+/// not.
 ///
-/// [SystemTheme.accentColor] returns the current accent color as [SystemAccentColor].
-///
+/// [SystemTheme.accentColor] returns the current accent color as
+/// [SystemAccentColor].
 class SystemTheme {
   /// Get the system accent color.
   ///
   /// This is available for the following platforms:
   ///   - Windows
+  ///   - Web
+  ///   - Android
   ///
   /// It returns [kDefaultSystemAccentColor] for unsupported platforms
   static final SystemAccentColor accentColor =
@@ -36,11 +39,13 @@ class SystemTheme {
   }
 }
 
-/// Defines accent colors & its variants on Windows.
-/// Colors are cached by default, call [SystemAccentColor.load] to the updated colors.
+/// Defines accent colors & its variants.
+/// Colors are cached by default, call [SystemAccentColor.load] to update the
+/// colors.
 ///
-/// It returns [SystemAccentColor.defaultAccentColor] if `SystemAccentColor.load` fails
-class SystemAccentColor extends Color {
+/// It returns [SystemAccentColor.defaultAccentColor] if
+/// [SystemAccentColor.load] fails
+class SystemAccentColor {
   final Color defaultAccentColor;
 
   /// Base accent color.
@@ -64,7 +69,7 @@ class SystemAccentColor extends Color {
   /// Darkest shade.
   late Color darkest;
 
-  SystemAccentColor(this.defaultAccentColor) : super(defaultAccentColor.alpha) {
+  SystemAccentColor(this.defaultAccentColor) {
     accent = defaultAccentColor;
     light = defaultAccentColor;
     lighter = defaultAccentColor;
@@ -80,6 +85,7 @@ class SystemAccentColor extends Color {
 
     final colors = await _channel.invokeMethod(kGetSystemAccentColorMethod);
     if (colors == null) return;
+
     accent = _retrieve(colors['accent'])!;
     light = _retrieve(colors['light']) ?? accent;
     lighter = _retrieve(colors['lighter']) ?? accent;

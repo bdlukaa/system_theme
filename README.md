@@ -16,12 +16,19 @@
   </p>
 </div>
 
-### Platforms
+- [Supported platforms](#supported-platforms)
+- [Usage](#usage)
+  - [Get system accent color](#get-system-accent-color)
+  - [Check dark mode](#check-dark-mode)
+- [Contribution](#contribution)
+  - [Acknowlegments](#acknowlegments)
 
-| Feature          | Android | iOS | Web | Windows | Linux |
-| ---------------- | ------- | --- | --- | ------- | ----- |
-| Get accent color | ✔️      |     | ✔️  | ✔️      |       |
-| Get dark mode    | ✔️      | ✔️  | ✔️  | ✔️      |       |
+### Supported platforms
+
+| Feature          | Android | iOS | Web | MacOs | Windows | Linux |
+| ---------------- | ------- | --- | --- | ----- | ------- | ----- |
+| Get accent color | ✔️      |     | ✔️ |       | ✔️      |       |
+| Get dark mode    | ✔️      | ✔️  | ✔️  | ✔️  | ✔️      |       |
 
 ## Usage
 
