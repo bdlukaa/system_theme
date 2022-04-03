@@ -10,8 +10,10 @@
     <a title="Github License">
       <img src="https://img.shields.io/github/license/bdlukaa/system_theme" />
     </a>
-    <a title="Patreon" href="https://shieldsio-patreon.vercel.app/api/?username=bdlukaa&type=patrons">
-      <img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dbdlukaa%26type%3Dpatrons&style=for-the-badge" />
+  </p>
+  <p align="center">
+    <a title="Patreon" href="https://patreon.com/bdlukaa">
+      <img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dbdlukaa%26type%3Dpatrons&style=for-the-badge">
     </a>
   </p>
   <p align="center">
