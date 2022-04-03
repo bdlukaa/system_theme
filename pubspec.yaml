@@ -12,6 +12,7 @@ dependencies:
     # path: system_theme_web/
   flutter:
     sdk: flutter
+  equatable:
 
 dev_dependencies:
   flutter_test:

@@ -24,16 +24,19 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = [
-      SystemTheme.accentInstance.lightest,
-      SystemTheme.accentInstance.lighter,
-      SystemTheme.accentInstance.light,
-      SystemTheme.accentInstance.accent,
-      SystemTheme.accentInstance.dark,
-      SystemTheme.accentInstance.darker,
-      SystemTheme.accentInstance.darkest,
-    ];
-    return Scaffold(
+
+    return SystemThemedWidget(
+        builder:(context, accent) {
+          final colors = [
+            accent.lightest,
+            accent.lighter,
+            accent.light,
+            accent.accent,
+            accent.dark,
+            accent.darker,
+            accent.darkest,
+          ];
+          return Scaffold(
       body: Column(
         children: colors.map((color) {
           return Expanded(
@@ -61,6 +64,6 @@ class _MyAppState extends State<MyApp> {
           );
         }).toList(),
       ),
-    );
+    );},);
   }
 }

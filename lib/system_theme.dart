@@ -1,6 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
+import 'package:equatable/equatable.dart';
+
+part 'system_theme_widget.dart';
 
 /// Default system accent color.
 const kDefaultSystemAccentColor = Color(0xff00b7c3);
@@ -54,8 +58,8 @@ class SystemTheme {
 /// Colors are cached by default, call [SystemAccentColor.load] to the updated colors.
 ///
 /// It returns [SystemAccentColor.defaultAccentColor] if `SystemAccentColor.load` fails
-class SystemAccentColor {
-  final Color defaultAccentColor;
+class SystemAccentColor extends Equatable{
+  late final Color defaultAccentColor;
 
   /// Base accent color.
   late Color accent;
@@ -78,6 +82,8 @@ class SystemAccentColor {
   /// Darkest shade.
   late Color darkest;
 
+  late bool darkModeEnabled;
+
   SystemAccentColor(this.defaultAccentColor) {
     accent = defaultAccentColor;
     light = defaultAccentColor;
@@ -86,6 +92,19 @@ class SystemAccentColor {
     dark = defaultAccentColor;
     darker = defaultAccentColor;
     darkest = defaultAccentColor;
+    darkModeEnabled=false;
+  }
+
+  SystemAccentColor.fromMap(dynamic colors){
+    defaultAccentColor=kDefaultSystemAccentColor;
+    accent = _retrieve(colors['accent']) ?? defaultAccentColor;
+    light = _retrieve(colors['light']) ?? accent;
+    lighter = _retrieve(colors['lighter']) ?? accent;
+    lightest = _retrieve(colors['lightest']) ?? accent;
+    dark = _retrieve(colors['dark']) ?? accent;
+    darker = _retrieve(colors['darker']) ?? accent;
+    darkest = _retrieve(colors['darkest']) ?? accent;
+    darkModeEnabled=colors['darkModeEnabled'];
   }
 
   /// Updates the fetched accent colors on Windows.
@@ -99,7 +118,22 @@ class SystemAccentColor {
     dark = _retrieve(colors['dark']) ?? accent;
     darker = _retrieve(colors['darker']) ?? accent;
     darkest = _retrieve(colors['darkest']) ?? accent;
+    darkModeEnabled=colors['darkModeEnabled'] ?? false;
   }
+
+
+
+  Future<void> loadFrom(dynamic colors)  async {
+    if (colors == null) return;
+    accent = _retrieve(colors['accent'])!;
+    light = _retrieve(colors['light']) ?? accent;
+    lighter = _retrieve(colors['lighter']) ?? accent;
+    lightest = _retrieve(colors['lightest']) ?? accent;
+    dark = _retrieve(colors['dark']) ?? accent;
+    darker = _retrieve(colors['darker']) ?? accent;
+    darkest = _retrieve(colors['darkest']) ?? accent;
+  }
+
 
   Color? _retrieve(dynamic? map) {
     if (map == null) return null;
@@ -110,4 +144,8 @@ class SystemAccentColor {
       1.0,
     );
   }
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [accent,light,lighter,lightest,dark,darker,darkest,darkModeEnabled];
 }
