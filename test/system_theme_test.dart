@@ -24,7 +24,7 @@ void main() {
 
   test('Get accent color', () async {
     final color = await channel.invokeMethod(kGetSystemAccentColorMethod);
-    expect(Color(0xff00b7c3).toString(), color);
+    expect(const Color(0xff00b7c3).toString(), color);
   });
 
   test('Check dark mode', () async {

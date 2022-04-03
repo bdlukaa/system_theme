@@ -1,9 +1,7 @@
-import 'dart:ui';
 import 'dart:ui' as ui;
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 
 /// Default system accent color.
 const kDefaultSystemAccentColor = Color(0xff00b7c3);
@@ -12,7 +10,7 @@ const kGetDarkModeMethod = 'SystemTheme.darkMode';
 const kGetSystemAccentColorMethod = 'SystemTheme.accentColor';
 
 /// Platform channel handler for invoking native methods.
-final MethodChannel _channel = MethodChannel('system_theme');
+const MethodChannel _channel = MethodChannel('system_theme');
 
 /// Class to return current system theme state on Windows.
 ///
@@ -91,13 +89,8 @@ class SystemAccentColor {
     darkest = _retrieve(colors['darkest']) ?? accent;
   }
 
-  Color? _retrieve(dynamic? map) {
+  Color? _retrieve(dynamic map) {
     if (map == null) return null;
-    return Color.fromRGBO(
-      map['R'],
-      map['G'],
-      map['B'],
-      1.0,
-    );
+    return Color.fromRGBO(map['R'], map['G'], map['B'], 1.0);
   }
 }
