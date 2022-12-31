@@ -23,6 +23,9 @@ flutter:
     platforms:
       windows:
         pluginClass: SystemThemePlugin
+      macos:
+        package: com.bruno.system_theme
+        pluginClass: SystemThemePlugin
       android:
         package: com.bruno.system_theme
         pluginClass: SystemThemePlugin
