@@ -28,3 +28,6 @@ flutter:
         pluginClass: SystemThemePlugin
       web:
         default_package: system_theme_web
+      linux:
+        package: com.bruno.system_theme
+        pluginClass: SystemThemePlugin
