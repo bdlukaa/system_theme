@@ -31,9 +31,9 @@
 ### Supported platforms
 
 | Feature          | Android | iOS | Web | MacOs | Windows | Linux |
-| ---------------- | ------- | --- | --- | ----- | ------- | ----- |
-| Get accent color | ✔️      |     | ✔️ |       | ✔️      |       |
-| Get dark mode    | ✔️      | ✔️  | ✔️  | ✔️  | ✔️      |       |
+| ---------------- | ------- | --- | --- | ----- | ------- |-------|
+| Get accent color | ✔️      |     | ✔️ | ✔️     | ✔️      | ✔️    |
+| Get dark mode    | ✔️      | ✔️  | ✔️  | ✔️  | ✔️      | ✔️    |
 
 ## Usage
 

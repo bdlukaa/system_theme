@@ -13,12 +13,10 @@ public class SystemThemePlugin: NSObject, FlutterPlugin {
 		case "getPlatformVersion":
 			result("macOS " + ProcessInfo.processInfo.operatingSystemVersionString)
 		case "SystemTheme.darkMode":
-			// let appearance = NSUserDefaults.standardUserDefaults().stringForKey("AppleInterfaceStyle") ?? "Light";
 			let type = UserDefaults.standard.string(forKey: "AppleInterfaceStyle") ?? "Light"
 			result(type == "Dark");
 		case "SystemTheme.accentColor":
 			if #available(macOS 10.14, *) {
-
 				if let color = NSColor.controlAccentColor.usingColorSpace(.sRGB) {
 					var r: CGFloat = 0;
 					var g: CGFloat = 0;
