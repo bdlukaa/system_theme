@@ -2,7 +2,8 @@ Date format: DD/MM/YYYY
 
 ## [next]
 
-- `SystemTheme.fallbackColor` ([#9](https://github.com/bdlukaa/system_theme/issues/9))
+- Bundle source code with the package for windows ([#8](https://github.com/bdlukaa/system_theme/issues/8))
+- Added `SystemTheme.fallbackColor` ([#9](https://github.com/bdlukaa/system_theme/issues/9))
 
 ## [2.0.0] - Breaking Changes - 03/04/2022
 

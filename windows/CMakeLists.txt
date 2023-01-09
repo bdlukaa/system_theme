@@ -12,20 +12,6 @@ include_directories(
 )
 
 add_compile_definitions("NOMINMAX")
-set(SYSTEM_THEME_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/SystemTheme")
-set(SYSTEM_THEME_DEPENDENCY "https://github.com/res2k/Windows10Colors/archive/master.zip")
-set(SYSTEM_THEME_ARCHIVE "${CMAKE_CURRENT_SOURCE_DIR}/SystemTheme/Windows10Colors.zip")
-set(SYSTEM_THEME_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/SystemTheme/Windows10Colors-master/Windows10Colors")
-if (NOT EXISTS "${SYSTEM_THEME_ARCHIVE}")
-  file(DOWNLOAD "${SYSTEM_THEME_DEPENDENCY}" "${SYSTEM_THEME_ARCHIVE}")
-endif()
-add_custom_target(EXTRACT ALL)
-add_custom_command(
-  TARGET EXTRACT PRE_BUILD
-  COMMAND ${CMAKE_COMMAND} -E tar xzf \"${SYSTEM_THEME_ARCHIVE}\"
-  WORKING_DIRECTORY "${SYSTEM_THEME_DIRECTORY}"
-  DEPENDS "${SYSTEM_THEME_ARCHIVE}"
-)
 
 add_library(${PLUGIN_NAME} SHARED
   "system_theme_plugin.cpp"

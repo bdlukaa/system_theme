@@ -5,7 +5,7 @@
 #include <flutter/plugin_registrar_windows.h>
 #include <flutter/standard_method_codec.h>
 
-#include <SystemTheme/Windows10Colors-master/Windows10Colors/Windows10Colors.cpp>
+#include "Windows10Colors/Windows10Colors.cpp"
 
 
 flutter::EncodableMap getRGBA(windows10colors::RGBA _color) {
