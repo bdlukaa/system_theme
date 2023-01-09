@@ -2,8 +2,9 @@ Date format: DD/MM/YYYY
 
 ## [next]
 
-- Bundle source code with the package for windows ([#8](https://github.com/bdlukaa/system_theme/issues/8))
+- Bundle source code with the package for Windows ([#8](https://github.com/bdlukaa/system_theme/issues/8))
 - Added `SystemTheme.fallbackColor` ([#9](https://github.com/bdlukaa/system_theme/issues/9))
+- Support for Linux and macOS ([#11](https://github.com/bdlukaa/system_theme/pull/11))
 
 ## [2.0.0] - Breaking Changes - 03/04/2022
 

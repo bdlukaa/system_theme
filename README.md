@@ -30,10 +30,10 @@
 
 ### Supported platforms
 
-| Feature          | Android | iOS | Web | MacOs | Windows | Linux |
-| ---------------- | ------- | --- | --- | ----- | ------- |-------|
-| Get accent color | ✔️      |     | ✔️ | ✔️     | ✔️      | ✔️    |
-| Get dark mode    | ✔️      | ✔️  | ✔️  | ✔️  | ✔️      | ✔️    |
+| Feature          | Android 10+ | iOS | Web | MacOs 10.4+ | Windows 10+ and XBox | Linux GTK 3+ |
+| ---------------- | :---------: | :-: | :-: | :---------: | :------------------: | :----------: |
+| Get accent color |     ✔️      |     | ✔️  |     ✔️      |          ✔️          |      ✔️      |
+| Get dark mode    |     ✔️      | ✔️  | ✔️  |     ✔️      |          ✔️          |      ✔️      |
 
 ## Usage
 
@@ -57,12 +57,27 @@ To reload the accent colors, use the method `load()`:
 await SystemTheme.accentInstance.load();
 ```
 
-You can load the colors on main, so the colors can't be wrong at runtime:
+You can load the colors before running the app, so the colors can't be wrong at runtime:
 
 ```dart
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemTheme.accentInstance.load();
+  runApp(MyApp());
+}
+```
+
+### Configure a fallback accent color
+
+To avoid unexpected effects at runtime, it's good to configure a fallback color. A fallback color is used if the system was not able to provide the color
+
+```dart
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  SystemTheme.fallbackColor = const Color(0xFF865432);
+  await SystemTheme.accentInstance.load();
+
   runApp(MyApp());
 }
 ```
