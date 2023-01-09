@@ -11,7 +11,7 @@ void main() {
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       switch (methodCall.method) {
         case kGetSystemAccentColorMethod:
-          return kDefaultSystemAccentColor.toString();
+          return kDefaultFallbackColor.toString();
         case kGetDarkModeMethod:
           return false;
         default:
@@ -22,7 +22,7 @@ void main() {
 
   test('Get accent color', () async {
     final color = await channel.invokeMethod(kGetSystemAccentColorMethod);
-    expect(const Color(0xff00b7c3).toString(), color);
+    expect(kDefaultFallbackColor.toString(), color);
   });
 
   test('Check dark mode', () async {
