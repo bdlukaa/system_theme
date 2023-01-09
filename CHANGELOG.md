@@ -1,5 +1,9 @@
 Date format: DD/MM/YYYY
 
+## [next]
+
+- `SystemTheme.fallbackColor` ([#9](https://github.com/bdlukaa/system_theme/issues/9))
+
 ## [2.0.0] - Breaking Changes - 03/04/2022
 
 - **BREAKING** `darkMode` was renamed to `isDarkMode`, and it's now sync
