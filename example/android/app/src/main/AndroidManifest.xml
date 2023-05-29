@@ -1,6 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.bruno.system_theme_example">
-   <application
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application
         android:label="system_theme_example"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
