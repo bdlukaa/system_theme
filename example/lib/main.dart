@@ -50,7 +50,7 @@ class _MyAppState extends State<MyApp> {
                   'Darker',
                   'Darkest',
                 ][colors.indexOf(color)],
-                style: Theme.of(context).textTheme.headline6?.copyWith(
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: color.computeLuminance() >= 0.5
                           ? Colors.black
                           : Colors.white,
