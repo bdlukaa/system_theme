@@ -60,6 +60,7 @@ jobs:
         with:
           channel: "stable"
           architecture: x64
+          cache: true
 
       - run: flutter pub get
         working-directory: ./example
@@ -81,6 +82,7 @@ jobs:
         with:
           channel: "stable"
           architecture: x64
+          cache: true
 
       - run: flutter pub get
         working-directory: ./example
