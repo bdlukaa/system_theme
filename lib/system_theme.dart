@@ -1,7 +1,6 @@
-import 'dart:ui' as ui;
-
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/foundation.dart' show PlatformDispatcher;
+import 'package:flutter/services.dart' show MethodChannel, Brightness, Color;
+import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
 /// Default system accent color.
 const kDefaultFallbackColor = Color(0xff00b7c3);
@@ -38,7 +37,7 @@ class SystemTheme {
   ///
   /// It returns `false` for unsupported platforms
   static bool get isDarkMode {
-    return ui.window.platformBrightness == Brightness.dark;
+    return PlatformDispatcher.instance.platformBrightness == Brightness.dark;
   }
 }
 
