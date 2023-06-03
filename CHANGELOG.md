@@ -1,3 +1,7 @@
+## [2.2.0] - [03/06/2023]
+
+- Fix app build on Android ([#14](https://github.com/bdlukaa/system_theme/issues/14))
+
 ## [2.1.0] - [09/01/2023]
 
 - Bundle source code with the package for Windows ([#8](https://github.com/bdlukaa/system_theme/issues/8))
