@@ -84,17 +84,21 @@ class SystemAccentColor {
   /// Updates the fetched accent colors on Windows.
   Future<void> load() async {
     WidgetsFlutterBinding.ensureInitialized();
+    
+    try {
+      final colors = await _channel.invokeMethod(kGetSystemAccentColorMethod);
+      if (colors == null) return;
 
-    final colors = await _channel.invokeMethod(kGetSystemAccentColorMethod);
-    if (colors == null) return;
-
-    accent = _retrieve(colors['accent'])!;
-    light = _retrieve(colors['light']) ?? accent;
-    lighter = _retrieve(colors['lighter']) ?? accent;
-    lightest = _retrieve(colors['lightest']) ?? accent;
-    dark = _retrieve(colors['dark']) ?? accent;
-    darker = _retrieve(colors['darker']) ?? accent;
-    darkest = _retrieve(colors['darkest']) ?? accent;
+      accent = _retrieve(colors['accent'])!;
+      light = _retrieve(colors['light']) ?? accent;
+      lighter = _retrieve(colors['lighter']) ?? accent;
+      lightest = _retrieve(colors['lightest']) ?? accent;
+      dark = _retrieve(colors['dark']) ?? accent;
+      darker = _retrieve(colors['darker']) ?? accent;
+      darkest = _retrieve(colors['darkest']) ?? accent;
+    } catch (e) {
+      return;
+    }
   }
 
   Color? _retrieve(dynamic map) {
