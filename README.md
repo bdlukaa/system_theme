@@ -45,16 +45,16 @@ import 'package:system_theme/system_theme.dart';
 
 ### Get system accent color
 
-Use the getter `SystemTheme.accentInstance.accent` to get the system accent color.
+Use the getter `SystemTheme.accentColor.accent` to get the system accent color.
 
 ```dart
-final accentColor = SystemTheme.accentInstance.accent;
+final accentColor = SystemTheme.accentColor.accent;
 ```
 
 To reload the accent colors, use the method `load()`:
 
 ```dart
-await SystemTheme.accentInstance.load();
+await SystemTheme.accentColor.load();
 ```
 
 You can load the colors before running the app, so the colors can't be wrong at runtime:
@@ -62,21 +62,21 @@ You can load the colors before running the app, so the colors can't be wrong at 
 ```dart
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemTheme.accentInstance.load();
+  await SystemTheme.accentColor.load();
   runApp(MyApp());
 }
 ```
 
 ### Configure a fallback accent color
 
-To avoid unexpected effects at runtime, it's good to configure a fallback color. A fallback color is used if the system was not able to provide the color
+To avoid unexpected effects at runtime, it's good to configure your own fallback color. The fallback color is used if the system was not able to provide the color.
 
 ```dart
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   SystemTheme.fallbackColor = const Color(0xFF865432);
-  await SystemTheme.accentInstance.load();
+  await SystemTheme.accentColor.load();
 
   runApp(MyApp());
 }
@@ -87,7 +87,7 @@ void main() async {
 Use the getter `SystemTheme.isDarkMode` to check if the device is in dark mode.
 
 ```dart
-final darkMode = SystemTheme.darkMode;
+final darkMode = SystemTheme.isDarkMode;
 ```
 
 ## Contribution
