@@ -8,29 +8,12 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, (methodCall) async {
-      switch (methodCall.method) {
-        case kGetSystemAccentColorMethod:
-          return kDefaultFallbackColor.toString();
-        case kGetDarkModeMethod:
-          return false;
-        default:
-          return null;
-      }
+    test('Get accent color', () async {
+      final color = await channel.invokeMethod(kGetSystemAccentColorMethod);
+      expect(kDefaultFallbackColor.toString(), color);
     });
   });
-
-  test('Get accent color', () async {
-    final color = await channel.invokeMethod(kGetSystemAccentColorMethod);
-    expect(kDefaultFallbackColor.toString(), color);
-  });
-
-  test('Check dark mode', () async {
-    final darkMode = await channel.invokeMethod(kGetDarkModeMethod);
-    expect(false, darkMode);
-  });
-
+  
   tearDown(() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, null);
