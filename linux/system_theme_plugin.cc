@@ -42,31 +42,14 @@ static void system_theme_plugin_handle_method_call(
 
 	const gchar *method = fl_method_call_get_name(method_call);
 
-	if (strcmp(method, "SystemTheme.accentColor") == 0) {
-		FlView *view = fl_plugin_registrar_get_view(self->registrar);
-		FlValue *accentColor = get_accent_color(GTK_WIDGET(view));
-		g_autoptr(FlValue) colors = fl_value_new_map();
+	FlView *view = fl_plugin_registrar_get_view(self->registrar);
+	FlValue *accentColor = get_accent_color(GTK_WIDGET(view));
+	g_autoptr(FlValue) colors = fl_value_new_map();
 
-		fl_value_set_string_take(colors, "accent", accentColor);
-		// other colors here...
+	fl_value_set_string_take(colors, "accent", accentColor);
+	// other colors here...
 
-		response = FL_METHOD_RESPONSE(fl_method_success_response_new(colors));
-
-	} else if (strcmp(method, "SystemTheme.darkMode") == 0) {
-		gboolean darkMode = false;
-
-		g_object_get(gtk_settings_get_default(),
-					 "gtk-application-prefer-dark-theme",
-					 &darkMode,
-					 NULL);
-
-		g_autoptr(FlValue) result = fl_value_new_bool(darkMode);
-		response = FL_METHOD_RESPONSE(fl_method_success_response_new(result));
-
-	} else {
-		response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
-	}
-
+	response = FL_METHOD_RESPONSE(fl_method_success_response_new(colors));
 
 	fl_method_call_respond(method_call, response, nullptr);
 }

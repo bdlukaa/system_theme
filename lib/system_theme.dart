@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 /// Default system accent color.
 const kDefaultFallbackColor = Color(0xff00b7c3);
 
-const kGetDarkModeMethod = 'SystemTheme.darkMode';
 const kGetSystemAccentColorMethod = 'SystemTheme.accentColor';
 
 /// Platform channel handler for invoking native methods.
