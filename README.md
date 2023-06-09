@@ -69,7 +69,7 @@ void main() async {
 
 ### Configure a fallback accent color
 
-To avoid unexpected effects at runtime, it's good to configure your own fallback color. The fallback color is used if the system was not able to provide the color.
+To avoid unexpected outcomes at runtime, it's recommended to configure your own fallback color. The fallback color is used if the system is not able to provide the color.
 
 ```dart
 void main() async {
