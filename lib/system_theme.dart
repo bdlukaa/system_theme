@@ -1,4 +1,6 @@
-import 'package:flutter/services.dart' show MethodChannel, Color;
+import 'package:flutter/foundation.dart' show debugPrint;
+import 'package:flutter/services.dart'
+    show Color, MethodChannel, MissingPluginException;
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
 /// Default system accent color.
@@ -74,16 +76,23 @@ class SystemAccentColor {
   Future<void> load() async {
     WidgetsFlutterBinding.ensureInitialized();
 
-    final colors = await _channel.invokeMethod(kGetSystemAccentColorMethod);
-    if (colors == null) return;
+    try {
+      final colors = await _channel.invokeMethod(kGetSystemAccentColorMethod);
+      if (colors == null) return;
 
-    accent = _retrieve(colors['accent'])!;
-    light = _retrieve(colors['light']) ?? accent;
-    lighter = _retrieve(colors['lighter']) ?? accent;
-    lightest = _retrieve(colors['lightest']) ?? accent;
-    dark = _retrieve(colors['dark']) ?? accent;
-    darker = _retrieve(colors['darker']) ?? accent;
-    darkest = _retrieve(colors['darkest']) ?? accent;
+      accent = _retrieve(colors['accent'])!;
+      light = _retrieve(colors['light']) ?? accent;
+      lighter = _retrieve(colors['lighter']) ?? accent;
+      lightest = _retrieve(colors['lightest']) ?? accent;
+      dark = _retrieve(colors['dark']) ?? accent;
+      darker = _retrieve(colors['darker']) ?? accent;
+      darkest = _retrieve(colors['darkest']) ?? accent;
+    } on MissingPluginException {
+      debugPrint('system_theme does not the current platform');
+      return;
+    } catch (_) {
+      rethrow;
+    }
   }
 
   Color? _retrieve(dynamic map) {
