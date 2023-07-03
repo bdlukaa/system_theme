@@ -10,9 +10,6 @@ public class SystemThemePlugin: NSObject, FlutterPlugin {
 
 	public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
 		switch call.method {
-		case "SystemTheme.darkMode":
-			let type = UserDefaults.standard.string(forKey: "AppleInterfaceStyle") ?? "Light"
-			result(type == "Dark");
 		case "SystemTheme.accentColor":
 			if #available(macOS 10.14, *) {
 				if let color = NSColor.controlAccentColor.usingColorSpace(.sRGB) {
