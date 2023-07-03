@@ -52,17 +52,6 @@ static void system_theme_plugin_handle_method_call(
 
 		response = FL_METHOD_RESPONSE(fl_method_success_response_new(colors));
 
-	} else if (strcmp(method, "SystemTheme.darkMode") == 0) {
-		gboolean darkMode = false;
-
-		g_object_get(gtk_settings_get_default(),
-					 "gtk-application-prefer-dark-theme",
-					 &darkMode,
-					 NULL);
-
-		g_autoptr(FlValue) result = fl_value_new_bool(darkMode);
-		response = FL_METHOD_RESPONSE(fl_method_success_response_new(result));
-
 	} else {
 		response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
 	}

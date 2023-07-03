@@ -22,8 +22,6 @@ class SystemThemeWeb {
   /// https://flutter.dev/go/federated-plugins
   Future<dynamic> handleMethodCall(MethodCall call) async {
     switch (call.method) {
-      case 'SystemTheme.darkMode':
-        return html.window.matchMedia('(prefers-color-scheme: dark)').matches;
       case 'SystemTheme.accentColor':
         final e = html.document.body;
         final currentBackgroundColor = e?.style.backgroundColor;

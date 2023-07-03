@@ -5,15 +5,12 @@ import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 /// Default system accent color.
 const kDefaultFallbackColor = Color(0xff00b7c3);
 
-const kGetDarkModeMethod = 'SystemTheme.darkMode';
 const kGetSystemAccentColorMethod = 'SystemTheme.accentColor';
 
 /// Platform channel handler for invoking native methods.
 const MethodChannel _channel = MethodChannel('system_theme');
 
 /// Class to return current system theme state on Windows.
-///
-/// [isDarkMode] returns whether currently dark mode is enabled or not.
 ///
 /// [accentColor] returns the current accent color as a [SystemAccentColor]. To
 /// configure a fallback color if [accentColor] is not available, set [fallback]
@@ -32,13 +29,6 @@ class SystemTheme {
   /// It returns [kDefaultFallbackColor] for unsupported platforms
   static final SystemAccentColor accentColor = SystemAccentColor(fallbackColor)
     ..load();
-
-  /// Wheter the dark mode is enabled or not. Defaults to `false`
-  ///
-  /// It returns `false` for unsupported platforms
-  static bool get isDarkMode {
-    return PlatformDispatcher.instance.platformBrightness == Brightness.dark;
-  }
 }
 
 /// Defines accent colors & its variants.

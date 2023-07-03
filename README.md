@@ -82,14 +82,6 @@ void main() async {
 }
 ```
 
-### Check dark mode
-
-Use the getter `SystemTheme.isDarkMode` to check if the device is in dark mode.
-
-```dart
-final darkMode = SystemTheme.darkMode;
-```
-
 ## Contribution
 
 Feel free to [open an issue](https://github.com/bdlukaa/system_theme/issues/new) if you find an error or [make pull requests](https://github.com/bdlukaa/system_theme/pulls).
