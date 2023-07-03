@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart' show PlatformDispatcher;
+import 'package:flutter/foundation.dart' show PlatformDispatcher, debugPrint;
 import 'package:flutter/services.dart'
     show Brightness, Color, MethodChannel, MissingPluginException;
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
@@ -98,6 +98,7 @@ class SystemAccentColor {
       darker = _retrieve(colors['darker']) ?? accent;
       darkest = _retrieve(colors['darkest']) ?? accent;
     } on MissingPluginException {
+      debugPrint('system_theme does not the current platform');
       return;
     } catch (_) {
       rethrow;
