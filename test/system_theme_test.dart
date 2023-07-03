@@ -13,7 +13,7 @@ void main() {
       expect(kDefaultFallbackColor.toString(), color);
     });
   });
-  
+
   tearDown(() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, null);

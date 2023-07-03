@@ -28,10 +28,10 @@ class SystemThemeWeb {
     e?.style.backgroundColor = currentBackgroundColor;
     if (backgroundColor != null) {
       backgroundColor = backgroundColor
-        .replaceAll('rgb(', '')
-        .replaceAll(')', '')
-        .replaceAll(' ', '');
-    final rgb = backgroundColor.split(',');
+          .replaceAll('rgb(', '')
+          .replaceAll(')', '')
+          .replaceAll(' ', '');
+      final rgb = backgroundColor.split(',');
       return {
         'accent': {
           'R': int.parse(rgb[0]),
@@ -40,7 +40,7 @@ class SystemThemeWeb {
         }
       };
     }
-    
+
     return null;
   }
 }
