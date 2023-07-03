@@ -1,6 +1,6 @@
-import 'package:flutter/foundation.dart' show PlatformDispatcher, debugPrint;
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter/services.dart'
-    show Brightness, Color, MethodChannel, MissingPluginException;
+    show Color, MethodChannel, MissingPluginException;
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
 /// Default system accent color.
