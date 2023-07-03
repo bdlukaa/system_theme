@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart' show PlatformDispatcher;
-import 'package:flutter/services.dart' show MethodChannel, Brightness, Color;
+import 'package:flutter/services.dart'
+    show Brightness, Color, MethodChannel, MissingPluginException;
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
 /// Default system accent color.
@@ -96,8 +97,10 @@ class SystemAccentColor {
       dark = _retrieve(colors['dark']) ?? accent;
       darker = _retrieve(colors['darker']) ?? accent;
       darkest = _retrieve(colors['darkest']) ?? accent;
-    } catch (e) {
+    } on MissingPluginException {
       return;
+    } catch (_) {
+      rethrow;
     }
   }
 
