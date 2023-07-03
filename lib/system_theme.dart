@@ -84,7 +84,7 @@ class SystemAccentColor {
   /// Updates the fetched accent colors on Windows.
   Future<void> load() async {
     WidgetsFlutterBinding.ensureInitialized();
-    
+
     try {
       final colors = await _channel.invokeMethod(kGetSystemAccentColorMethod);
       if (colors == null) return;
