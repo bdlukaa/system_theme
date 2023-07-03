@@ -1,5 +1,4 @@
-import 'package:flutter/foundation.dart' show PlatformDispatcher;
-import 'package:flutter/services.dart' show MethodChannel, Brightness, Color;
+import 'package:flutter/services.dart' show MethodChannel, Color;
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
 /// Default system accent color.
