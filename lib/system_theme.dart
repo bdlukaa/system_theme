@@ -88,7 +88,7 @@ class SystemAccentColor {
       darker = _retrieve(colors['darker']) ?? accent;
       darkest = _retrieve(colors['darkest']) ?? accent;
     } on MissingPluginException {
-      debugPrint('system_theme does not the current platform');
+      debugPrint('system_theme does not implement the current platform');
       return;
     } catch (_) {
       rethrow;
@@ -96,6 +96,7 @@ class SystemAccentColor {
   }
 
   Color? _retrieve(dynamic map) {
+    assert(map == null || map is Map);
     if (map == null) return null;
     return Color.fromRGBO(map['R'], map['G'], map['B'], 1.0);
   }
