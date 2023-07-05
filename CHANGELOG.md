@@ -1,3 +1,8 @@
+## [2.3.0] - [04/07/2023]
+
+- Removed `SystemTheme.darkMode` ([#24](https://github.com/bdlukaa/system_theme/pull/24))
+- Prevent app breaks on loading accent color failed ([#19](https://github.com/bdlukaa/system_theme/pull/19))
+
 ## [2.2.0] - [03/06/2023]
 
 - Fix app build on Android ([#14](https://github.com/bdlukaa/system_theme/issues/14))
