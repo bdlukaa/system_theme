@@ -1,6 +1,6 @@
 name: system_theme
 description: A plugin to get the current system theme info. Supports Android, Web, Windows, Linux and macOS
-version: 2.2.0
+version: 2.3.0
 repository: https://github.com/bdlukaa/system_theme
 
 environment:
