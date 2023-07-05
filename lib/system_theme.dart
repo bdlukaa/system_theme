@@ -1,19 +1,17 @@
-import 'package:flutter/foundation.dart' show PlatformDispatcher;
-import 'package:flutter/services.dart' show MethodChannel, Brightness, Color;
+import 'package:flutter/foundation.dart' show debugPrint;
+import 'package:flutter/services.dart'
+    show Color, MethodChannel, MissingPluginException;
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
 /// Default system accent color.
 const kDefaultFallbackColor = Color(0xff00b7c3);
 
-const kGetDarkModeMethod = 'SystemTheme.darkMode';
 const kGetSystemAccentColorMethod = 'SystemTheme.accentColor';
 
 /// Platform channel handler for invoking native methods.
 const MethodChannel _channel = MethodChannel('system_theme');
 
 /// Class to return current system theme state on Windows.
-///
-/// [isDarkMode] returns whether currently dark mode is enabled or not.
 ///
 /// [accentColor] returns the current accent color as a [SystemAccentColor]. To
 /// configure a fallback color if [accentColor] is not available, set [fallback]
@@ -32,13 +30,6 @@ class SystemTheme {
   /// It returns [kDefaultFallbackColor] for unsupported platforms
   static final SystemAccentColor accentColor = SystemAccentColor(fallbackColor)
     ..load();
-
-  /// Wheter the dark mode is enabled or not. Defaults to `false`
-  ///
-  /// It returns `false` for unsupported platforms
-  static bool get isDarkMode {
-    return PlatformDispatcher.instance.platformBrightness == Brightness.dark;
-  }
 }
 
 /// Defines accent colors & its variants.
@@ -85,16 +76,23 @@ class SystemAccentColor {
   Future<void> load() async {
     WidgetsFlutterBinding.ensureInitialized();
 
-    final colors = await _channel.invokeMethod(kGetSystemAccentColorMethod);
-    if (colors == null) return;
+    try {
+      final colors = await _channel.invokeMethod(kGetSystemAccentColorMethod);
+      if (colors == null) return;
 
-    accent = _retrieve(colors['accent'])!;
-    light = _retrieve(colors['light']) ?? accent;
-    lighter = _retrieve(colors['lighter']) ?? accent;
-    lightest = _retrieve(colors['lightest']) ?? accent;
-    dark = _retrieve(colors['dark']) ?? accent;
-    darker = _retrieve(colors['darker']) ?? accent;
-    darkest = _retrieve(colors['darkest']) ?? accent;
+      accent = _retrieve(colors['accent'])!;
+      light = _retrieve(colors['light']) ?? accent;
+      lighter = _retrieve(colors['lighter']) ?? accent;
+      lightest = _retrieve(colors['lightest']) ?? accent;
+      dark = _retrieve(colors['dark']) ?? accent;
+      darker = _retrieve(colors['darker']) ?? accent;
+      darkest = _retrieve(colors['darkest']) ?? accent;
+    } on MissingPluginException {
+      debugPrint('system_theme does not the current platform');
+      return;
+    } catch (_) {
+      rethrow;
+    }
   }
 
   Color? _retrieve(dynamic map) {

@@ -24,7 +24,6 @@
 - [Supported platforms](#supported-platforms)
 - [Usage](#usage)
   - [Get system accent color](#get-system-accent-color)
-  - [Check dark mode](#check-dark-mode)
 - [Contribution](#contribution)
   - [Acknowlegments](#acknowlegments)
 
@@ -33,7 +32,6 @@
 | Feature          | Android 10+ | iOS | Web | MacOs 10.4+ | Windows 10+ and XBox | Linux GTK 3+ |
 | ---------------- | :---------: | :-: | :-: | :---------: | :------------------: | :----------: |
 | Get accent color |     ✔️      |     | ✔️  |     ✔️      |          ✔️          |      ✔️      |
-| Get dark mode    |     ✔️      | ✔️  | ✔️  |     ✔️      |          ✔️          |      ✔️      |
 
 ## Usage
 
@@ -80,14 +78,6 @@ void main() async {
 
   runApp(MyApp());
 }
-```
-
-### Check dark mode
-
-Use the getter `SystemTheme.isDarkMode` to check if the device is in dark mode.
-
-```dart
-final darkMode = SystemTheme.isDarkMode;
 ```
 
 ## Contribution

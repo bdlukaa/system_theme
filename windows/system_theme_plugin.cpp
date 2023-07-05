@@ -61,12 +61,7 @@ namespace {
     SystemThemePlugin::~SystemThemePlugin() {}
 
     void SystemThemePlugin::HandleMethodCall(const flutter::MethodCall<flutter::EncodableValue> &method_call, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-        if (method_call.method_name() == "SystemTheme.darkMode") {
-            bool darkMode = false;
-            windows10colors::GetAppDarkModeEnabled(darkMode);
-            result->Success(flutter::EncodableValue(darkMode));
-        }
-        else if (method_call.method_name() == "SystemTheme.accentColor") {
+        if (method_call.method_name() == "SystemTheme.accentColor") {
             windows10colors::AccentColor accentColors;
             windows10colors::GetAccentColor(accentColors);
             flutter::EncodableMap colors = flutter::EncodableMap();
