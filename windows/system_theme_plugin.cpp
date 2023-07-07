@@ -170,9 +170,6 @@ SystemThemePlugin::~SystemThemePlugin() {
                 windows10colors::AccentColor accentColors;
                 windows10colors::GetAccentColor(accentColors);
                 flutter::EncodableMap colors = flutter::EncodableMap();
-                bool darkMode;
-                windows10colors::GetAppDarkModeEnabled(darkMode);
-                colors[flutter::EncodableValue("darkModeEnabled")]=flutter::EncodableValue(darkMode);
                 colors[flutter::EncodableValue("accent")] = flutter::EncodableValue(
                     getRGBA(accentColors.accent)
                 );

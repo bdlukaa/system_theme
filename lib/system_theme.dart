@@ -1,12 +1,19 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter/services.dart'
-    show Color, MethodChannel, MissingPluginException;
+    show Color, EventChannel, MethodChannel, MissingPluginException;
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
+
+export 'system_theme_widget.dart';
 
 /// Default system accent color.
 const kDefaultFallbackColor = Color(0xff00b7c3);
 
 const kGetSystemAccentColorMethod = 'SystemTheme.accentColor';
+
+/// Platform event channel handler for system theme changes.
+const _eventChannel = EventChannel('system_theme_events/switch_callback');
 
 /// Platform channel handler for invoking native methods.
 const MethodChannel _channel = MethodChannel('system_theme');
@@ -30,6 +37,12 @@ class SystemTheme {
   /// It returns [kDefaultFallbackColor] for unsupported platforms
   static final SystemAccentColor accentColor = SystemAccentColor(fallbackColor)
     ..load();
+
+  static Stream<SystemAccentColor> get onChange {
+    return _eventChannel.receiveBroadcastStream().map((event) {
+      return SystemAccentColor._fromMap(event);
+    }).distinct();
+  }
 }
 
 /// Defines accent colors & its variants.
@@ -39,6 +52,8 @@ class SystemTheme {
 /// It returns [SystemAccentColor.defaultAccentColor] if
 /// [SystemAccentColor.load] fails
 class SystemAccentColor {
+  StreamSubscription<SystemAccentColor>? _subscription;
+
   final Color defaultAccentColor;
 
   /// Base accent color.
@@ -62,8 +77,6 @@ class SystemAccentColor {
   /// Darkest shade.
   late Color darkest;
 
-  late bool darkModeEnabled;
-
   SystemAccentColor(this.defaultAccentColor) {
     accent = defaultAccentColor;
     light = defaultAccentColor;
@@ -72,10 +85,19 @@ class SystemAccentColor {
     dark = defaultAccentColor;
     darker = defaultAccentColor;
     darkest = defaultAccentColor;
-    darkModeEnabled = false;
+
+    _subscription = SystemTheme.onChange.listen((color) {
+      accent = color.accent;
+      light = color.light;
+      lighter = color.lighter;
+      lightest = color.lightest;
+      dark = color.dark;
+      darker = color.darker;
+      darkest = color.darkest;
+    });
   }
 
-  SystemAccentColor.fromMap(dynamic colors)
+  SystemAccentColor._fromMap(dynamic colors)
       : defaultAccentColor = SystemTheme.fallbackColor {
     accent = _retrieve(colors['accent']) ?? defaultAccentColor;
     light = _retrieve(colors['light']) ?? accent;
@@ -84,7 +106,6 @@ class SystemAccentColor {
     dark = _retrieve(colors['dark']) ?? accent;
     darker = _retrieve(colors['darker']) ?? accent;
     darkest = _retrieve(colors['darkest']) ?? accent;
-    darkModeEnabled = colors['darkModeEnabled'];
   }
 
   /// Updates the fetched accent colors on Windows.
@@ -114,6 +135,11 @@ class SystemAccentColor {
     assert(map == null || map is Map);
     if (map == null) return null;
     return Color.fromRGBO(map['R'], map['G'], map['B'], 1.0);
+  }
+
+  /// Releases any used resources
+  void dispose() {
+    _subscription?.cancel();
   }
 
   @override
