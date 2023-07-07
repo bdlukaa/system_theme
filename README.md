@@ -99,6 +99,22 @@ SystemThemeBuilder(builder: (context, accent) {
 });
 ```
 
+### Checking if accent color is supported
+
+The `flutter/foundation` package provides a `defaultTargetPlatform` getter, which can be used to check what platform the current app is running on.
+
+You can check if the current platform supports accent colors using this extension method:
+
+```dart
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
+
+void main() {
+  final supported = defaultTargetPlatform.supportsAccentColor;
+
+  print('Accent color is: ${supported ? 'supported' : 'not supported'} on the current platform');
+}
+```
+
 ## Contribution
 
 Feel free to [open an issue](https://github.com/bdlukaa/system_theme/issues/new) if you find an error or [make pull requests](https://github.com/bdlukaa/system_theme/pulls).
