@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, debugPrint, kIsWeb;
 import 'package:flutter/services.dart'
     show Color, EventChannel, MethodChannel, MissingPluginException;
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
@@ -18,6 +19,18 @@ const _eventChannel = EventChannel('system_theme_events/switch_callback');
 
 /// Platform channel handler for invoking native methods.
 const MethodChannel _channel = MethodChannel('system_theme');
+
+extension PlatformHelpers on TargetPlatform {
+  /// A helper that can be used to check if the current platform supports
+  /// accent colors.
+  bool get supportsAccentColor =>
+      !kIsWeb &&
+      [
+        TargetPlatform.windows,
+        TargetPlatform.macOS,
+        TargetPlatform.android,
+      ].contains(this);
+}
 
 /// Class to return current system theme state on Windows.
 ///
