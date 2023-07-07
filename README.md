@@ -29,9 +29,10 @@
 
 ### Supported platforms
 
-| Feature          | Android 10+ | iOS | Web | MacOs 10.4+ | Windows 10+ and XBox | Linux GTK 3+ |
-| ---------------- | :---------: | :-: | :-: | :---------: | :------------------: | :----------: |
-| Get accent color |     ✔️      |     | ✔️  |     ✔️      |          ✔️          |      ✔️      |
+| Feature           | Android 10+ | iOS | Web | MacOs 10.4+ | Windows 10+ and XBox | Linux GTK 3+ |
+| ----------------- | :---------: | :-: | :-: | :---------: | :------------------: | :----------: |
+| Get accent color  |     ✔️      |     | ✔️  |     ✔️      |          ✔️          |      ✔️      |
+| Listem to changes |             |     |     |             |          ✔️          |              |
 
 ## Usage
 
@@ -80,6 +81,24 @@ void main() async {
 }
 ```
 
+### Listen to changes on the system accent color
+
+To simply listen to changes on the system accent color, use the `SystemTheme.onChange` stream:
+
+```dart
+SystemTheme.onChange.listen((event) {
+  debugPrint('Accent color changed to ${event.accentColor}');
+});
+```
+
+Alteratively, you can the `SystemThemeBuilder` widget to listen to changes on the system accent color:
+
+```dart
+SystemThemeBuilder(builder: (context, accent) {
+  return ColoredBox(color: accent.accentColor);
+});
+```
+
 ## Contribution
 
 Feel free to [open an issue](https://github.com/bdlukaa/system_theme/issues/new) if you find an error or [make pull requests](https://github.com/bdlukaa/system_theme/pulls).
@@ -87,3 +106,4 @@ Feel free to [open an issue](https://github.com/bdlukaa/system_theme/issues/new)
 ### Acknowlegments
 
 - [@alexmercerind](https://github.com/alexmercerind) for the Windows implementation
+- [@pgiacomo69](https://github.com/pgiacomo69) for the accent color listener

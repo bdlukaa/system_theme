@@ -1,23 +1,37 @@
-import 'package:flutter/foundation.dart' show debugPrint;
+import 'dart:async';
+import 'dart:io';
+
+import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
 import 'package:flutter/services.dart'
-    show Color, MethodChannel, MissingPluginException;
+    show Color, EventChannel, MethodChannel, MissingPluginException;
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
+
+export 'system_theme_builder.dart';
 
 /// Default system accent color.
 const kDefaultFallbackColor = Color(0xff00b7c3);
 
 const kGetSystemAccentColorMethod = 'SystemTheme.accentColor';
 
+/// Platform event channel handler for system theme changes.
+const _eventChannel = EventChannel('system_theme_events/switch_callback');
+
 /// Platform channel handler for invoking native methods.
 const MethodChannel _channel = MethodChannel('system_theme');
 
 /// Class to return current system theme state on Windows.
 ///
-/// [accentColor] returns the current accent color as a [SystemAccentColor]. To
-/// configure a fallback color if [accentColor] is not available, set [fallback]
-/// to the desired color
+/// [accentColor] returns the current accent color as a [SystemAccentColor].
+///
+/// To configure a fallback color if [accentColor] is not available, set
+/// [fallbackColor] to the desired color
+///
+/// [onChange] returns a stream of [SystemAccentColor] that notifies when the
+/// system accent color changes.
 class SystemTheme {
   /// The fallback color
+  ///
+  /// Returns [kDefaultFallbackColor] if not set
   static Color fallbackColor = kDefaultFallbackColor;
 
   /// Get the system accent color.
@@ -30,6 +44,26 @@ class SystemTheme {
   /// It returns [kDefaultFallbackColor] for unsupported platforms
   static final SystemAccentColor accentColor = SystemAccentColor(fallbackColor)
     ..load();
+
+  /// A stream of [SystemAccentColor] that notifies when the system accent color
+  /// changes.
+  ///
+  /// Currently only available on Windows.
+  ///
+  /// Basica usage:
+  ///
+  /// ```dart
+  /// SystemTheme.onChange.listen((color) {
+  ///   debugPrint('Accent color changed to ${color.accent}');
+  /// });
+  /// ```
+  static Stream<SystemAccentColor> get onChange {
+    if (kIsWeb || !Platform.isWindows) return Stream.value(accentColor);
+
+    return _eventChannel.receiveBroadcastStream().map((event) {
+      return SystemAccentColor._fromMap(event);
+    }).distinct();
+  }
 }
 
 /// Defines accent colors & its variants.
@@ -39,6 +73,9 @@ class SystemTheme {
 /// It returns [SystemAccentColor.defaultAccentColor] if
 /// [SystemAccentColor.load] fails
 class SystemAccentColor {
+  StreamSubscription<SystemAccentColor>? _subscription;
+
+  /// The accent color used when the others are not available.
   final Color defaultAccentColor;
 
   /// Base accent color.
@@ -72,9 +109,30 @@ class SystemAccentColor {
     darkest = defaultAccentColor;
   }
 
+  SystemAccentColor._fromMap(dynamic colors)
+      : defaultAccentColor = SystemTheme.fallbackColor {
+    accent = _retrieve(colors['accent']) ?? defaultAccentColor;
+    light = _retrieve(colors['light']) ?? accent;
+    lighter = _retrieve(colors['lighter']) ?? accent;
+    lightest = _retrieve(colors['lightest']) ?? accent;
+    dark = _retrieve(colors['dark']) ?? accent;
+    darker = _retrieve(colors['darker']) ?? accent;
+    darkest = _retrieve(colors['darkest']) ?? accent;
+  }
+
   /// Updates the fetched accent colors on Windows.
   Future<void> load() async {
     WidgetsFlutterBinding.ensureInitialized();
+
+    _subscription = SystemTheme.onChange.listen((color) {
+      accent = color.accent;
+      light = color.light;
+      lighter = color.lighter;
+      lightest = color.lightest;
+      dark = color.dark;
+      darker = color.darker;
+      darkest = color.darkest;
+    });
 
     try {
       final colors = await _channel.invokeMethod(kGetSystemAccentColorMethod);
@@ -99,6 +157,11 @@ class SystemAccentColor {
     assert(map == null || map is Map);
     if (map == null) return null;
     return Color.fromRGBO(map['R'], map['G'], map['B'], 1.0);
+  }
+
+  /// Releases any used resources
+  void dispose() {
+    _subscription?.cancel();
   }
 
   @override
