@@ -24,7 +24,7 @@ extension PlatformHelpers on TargetPlatform {
   /// A helper that can be used to check if the current platform supports
   /// accent colors.
   bool get supportsAccentColor =>
-      !kIsWeb &&
+      kIsWeb ||
       [
         TargetPlatform.windows,
         TargetPlatform.macOS,
