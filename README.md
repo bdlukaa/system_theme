@@ -106,3 +106,4 @@ Feel free to [open an issue](https://github.com/bdlukaa/system_theme/issues/new)
 ### Acknowlegments
 
 - [@alexmercerind](https://github.com/alexmercerind) for the Windows implementation
+- [@pgiacomo69](https://github.com/pgiacomo69) for the accent color listener
