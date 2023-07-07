@@ -1,6 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
-import 'package:flutter/foundation.dart' show debugPrint;
+import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
 import 'package:flutter/services.dart'
     show Color, EventChannel, MethodChannel, MissingPluginException;
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
@@ -39,6 +40,8 @@ class SystemTheme {
     ..load();
 
   static Stream<SystemAccentColor> get onChange {
+    if (kIsWeb || !Platform.isWindows) return Stream.value(accentColor);
+
     return _eventChannel.receiveBroadcastStream().map((event) {
       return SystemAccentColor._fromMap(event);
     }).distinct();
@@ -85,16 +88,6 @@ class SystemAccentColor {
     dark = defaultAccentColor;
     darker = defaultAccentColor;
     darkest = defaultAccentColor;
-
-    _subscription = SystemTheme.onChange.listen((color) {
-      accent = color.accent;
-      light = color.light;
-      lighter = color.lighter;
-      lightest = color.lightest;
-      dark = color.dark;
-      darker = color.darker;
-      darkest = color.darkest;
-    });
   }
 
   SystemAccentColor._fromMap(dynamic colors)
@@ -111,6 +104,16 @@ class SystemAccentColor {
   /// Updates the fetched accent colors on Windows.
   Future<void> load() async {
     WidgetsFlutterBinding.ensureInitialized();
+
+    _subscription = SystemTheme.onChange.listen((color) {
+      accent = color.accent;
+      light = color.light;
+      lighter = color.lighter;
+      lightest = color.lightest;
+      dark = color.dark;
+      darker = color.darker;
+      darkest = color.darkest;
+    });
 
     try {
       final colors = await _channel.invokeMethod(kGetSystemAccentColorMethod);
