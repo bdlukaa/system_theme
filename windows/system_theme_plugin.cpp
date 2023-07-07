@@ -6,7 +6,7 @@
 #include <flutter/plugin_registrar_windows.h>
 #include <flutter/standard_method_codec.h>
 
-#include <SystemTheme/Windows10Colors-master/Windows10Colors/Windows10Colors.cpp>
+#include "Windows10Colors/Windows10Colors.cpp"
 
 #include <mutex>
 
@@ -232,13 +232,7 @@ SystemThemePlugin::~SystemThemePlugin() {
           }
 
     void SystemThemePlugin::HandleMethodCall(const flutter::MethodCall<flutter::EncodableValue> &method_call, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-        if (method_call.method_name() == "SystemTheme.darkMode") {
-            bool darkMode = false;
-            windows10colors::GetAppDarkModeEnabled(darkMode);
-            result->Success(flutter::EncodableValue(darkMode));
-        }
-        else if (method_call.method_name() == "SystemTheme.accentColor") {
-
+        if (method_call.method_name() == "SystemTheme.accentColor") {
             result->Success(flutter::EncodableValue(getAccentColor()));
         }
         else {

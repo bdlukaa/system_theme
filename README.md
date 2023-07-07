@@ -10,25 +10,28 @@
     <a title="Github License">
       <img src="https://img.shields.io/github/license/bdlukaa/system_theme" />
     </a>
-    <a title="PRs are welcome">
-      <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" />
+  </p>
+  <p align="center">
+    <a title="Patreon" href="https://patreon.com/bdlukaa">
+      <img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dbdlukaa%26type%3Dpatrons&style=for-the-badge">
     </a>
   </p>
   <p align="center">
-    <a title="Buy me a coffee" href="https://www.buymeacoffee.com/bdlukaa">
-      <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=bdlukaa&button_colour=FF5F5F&font_colour=ffffff&font_family=Lato&outline_colour=000000&coffee_colour=FFDD00">
-    </a>
-  </p>
-  <p align="center">
-  A plugin to get the current system theme info
+  A flutter plugin to get the current system theme information
   </p>
 </div>
 
-### Platforms
+- [Supported platforms](#supported-platforms)
+- [Usage](#usage)
+  - [Get system accent color](#get-system-accent-color)
+- [Contribution](#contribution)
+  - [Acknowlegments](#acknowlegments)
 
-✔️ Android\
-✔️ Web\
-✔️ Windows (Thanks to [@alexmercerind](https://github.com/alexmercerind))
+### Supported platforms
+
+| Feature          | Android 10+ | iOS | Web | MacOs 10.4+ | Windows 10+ and XBox | Linux GTK 3+ |
+| ---------------- | :---------: | :-: | :-: | :---------: | :------------------: | :----------: |
+| Get accent color |     ✔️      |     | ✔️  |     ✔️      |          ✔️          |      ✔️      |
 
 ## Usage
 
@@ -40,36 +43,47 @@ import 'package:system_theme/system_theme.dart';
 
 ### Get system accent color
 
-Use the getter `SystemTheme.accentInstance.accent` to get the system accent color.
+Use the getter `SystemTheme.accentColor.accent` to get the system accent color.
 
 ```dart
-final accentColor = SystemTheme.accentInstance.accent;
+final accentColor = SystemTheme.accentColor.accent;
 ```
 
 To reload the accent colors, use the method `load()`:
 
 ```dart
-await SystemTheme.accentInstance.load();
+await SystemTheme.accentColor.load();
 ```
 
-You can load the colors on main, so the colors can't be wrong at runtime:
+You can load the colors before running the app, so the colors can't be wrong at runtime:
 
 ```dart
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemTheme.accentInstance.load();
+  await SystemTheme.accentColor.load();
   runApp(MyApp());
 }
 ```
 
-### Check dark mode
+### Configure a fallback accent color
 
-Use the getter `SystemTheme.darkMode` to check if the device is in dark mode.
+To avoid unexpected outcomes at runtime, it's recommended to configure your own fallback color. The fallback color is used if the system is not able to provide the color.
 
 ```dart
-final darkMode = await SystemTheme.darkMode;
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  SystemTheme.fallbackColor = const Color(0xFF865432);
+  await SystemTheme.accentColor.load();
+
+  runApp(MyApp());
+}
 ```
 
-# Contribution
+## Contribution
 
 Feel free to [open an issue](https://github.com/bdlukaa/system_theme/issues/new) if you find an error or [make pull requests](https://github.com/bdlukaa/system_theme/pulls).
+
+### Acknowlegments
+
+- [@alexmercerind](https://github.com/alexmercerind) for the Windows implementation

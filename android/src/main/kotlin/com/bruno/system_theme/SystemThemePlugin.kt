@@ -25,19 +25,6 @@ class SystemThemePlugin: FlutterPlugin, ActivityAware, MethodCallHandler {
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
     when (call.method) {
-        "SystemTheme.darkMode" -> {
-          when (activity.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
-            Configuration.UI_MODE_NIGHT_YES -> {
-              result.success(true)
-            }
-            Configuration.UI_MODE_NIGHT_NO -> {
-              result.success(false)
-            }
-            Configuration.UI_MODE_NIGHT_UNDEFINED -> {
-              result.success(false)
-            }
-          }
-        }
         "SystemTheme.accentColor" -> {
           val accentColor = getDeviceAccentColor(activity)
           val hexColor = java.lang.String.format("#%06X", 0xFFFFFF and accentColor)
