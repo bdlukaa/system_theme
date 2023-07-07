@@ -6,7 +6,7 @@ import 'package:flutter/services.dart'
     show Color, EventChannel, MethodChannel, MissingPluginException;
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
-export 'system_theme_widget.dart';
+export 'system_theme_builder.dart';
 
 /// Default system accent color.
 const kDefaultFallbackColor = Color(0xff00b7c3);
@@ -21,11 +21,17 @@ const MethodChannel _channel = MethodChannel('system_theme');
 
 /// Class to return current system theme state on Windows.
 ///
-/// [accentColor] returns the current accent color as a [SystemAccentColor]. To
-/// configure a fallback color if [accentColor] is not available, set [fallback]
-/// to the desired color
+/// [accentColor] returns the current accent color as a [SystemAccentColor].
+///
+/// To configure a fallback color if [accentColor] is not available, set
+/// [fallbackColor] to the desired color
+///
+/// [onChange] returns a stream of [SystemAccentColor] that notifies when the
+/// system accent color changes.
 class SystemTheme {
   /// The fallback color
+  ///
+  /// Returns [kDefaultFallbackColor] if not set
   static Color fallbackColor = kDefaultFallbackColor;
 
   /// Get the system accent color.
@@ -39,6 +45,18 @@ class SystemTheme {
   static final SystemAccentColor accentColor = SystemAccentColor(fallbackColor)
     ..load();
 
+  /// A stream of [SystemAccentColor] that notifies when the system accent color
+  /// changes.
+  ///
+  /// Currently only available on Windows.
+  ///
+  /// Basica usage:
+  ///
+  /// ```dart
+  /// SystemTheme.onChange.listen((color) {
+  ///   debugPrint('Accent color changed to ${color.accent}');
+  /// });
+  /// ```
   static Stream<SystemAccentColor> get onChange {
     if (kIsWeb || !Platform.isWindows) return Stream.value(accentColor);
 
@@ -57,6 +75,7 @@ class SystemTheme {
 class SystemAccentColor {
   StreamSubscription<SystemAccentColor>? _subscription;
 
+  /// The accent color used when the others are not available.
   final Color defaultAccentColor;
 
   /// Base accent color.
