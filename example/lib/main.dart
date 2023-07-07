@@ -31,12 +31,12 @@ class _MyAppState extends State<MyApp> {
         accent.dark,
         accent.darker,
         accent.darkest,
-    ];
-    return Scaffold(
-      body: Column(children: [
-        Text(
-            'Accent color: ${defaultTargetPlatform.supportsAccentColor ? 'supported' : 'not supported'}'),
-        ...colors.map((color) {
+      ];
+      return Scaffold(
+        body: Column(children: [
+          Text(
+              'Accent color: ${defaultTargetPlatform.supportsAccentColor ? 'supported' : 'not supported'}'),
+          ...colors.map((color) {
             return Expanded(
               child: Container(
                 color: color,
