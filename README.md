@@ -32,7 +32,7 @@
 | Feature           | Android 10+ | iOS | Web | MacOs 10.4+ | Windows 10+ and XBox | Linux GTK 3+ |
 | ----------------- | :---------: | :-: | :-: | :---------: | :------------------: | :----------: |
 | Get accent color  |     ✔️      |     | ✔️  |     ✔️      |          ✔️          |      ✔️      |
-| Listem to changes |             |     |     |             |          ✔️          |              |
+| Listen to changes |             |     |     |             |          ✔️          |              |
 
 ## Usage
 
