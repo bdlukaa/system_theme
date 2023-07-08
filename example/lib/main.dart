@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:system_theme/system_theme.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,8 +33,10 @@ class _MyAppState extends State<MyApp> {
         accent.darkest,
       ];
       return Scaffold(
-        body: Column(
-          children: colors.map((color) {
+        body: Column(children: [
+          Text(
+              'Accent color: ${defaultTargetPlatform.supportsAccentColor ? 'supported' : 'not supported'}'),
+          ...colors.map((color) {
             return Expanded(
               child: Container(
                 color: color,
@@ -58,7 +61,7 @@ class _MyAppState extends State<MyApp> {
               ),
             );
           }).toList(),
-        ),
+        ]),
       );
     });
   }
