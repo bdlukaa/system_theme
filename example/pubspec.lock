@@ -155,7 +155,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "2.3.0"
+    version: "2.3.1"
   system_theme_web:
     dependency: transitive
     description:
