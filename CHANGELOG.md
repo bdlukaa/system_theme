@@ -1,3 +1,7 @@
+## [next]
+
+- Fix late initialization bug when using the `onChange` stream on platforms other than Windows ([#29](https://github.com/bdlukaa/system_theme/issues/29))
+
 ## [2.3.0] - [08/07/2023]
 
 - **BREAKING** Removed `SystemTheme.darkMode` ([#24](https://github.com/bdlukaa/system_theme/pull/24))

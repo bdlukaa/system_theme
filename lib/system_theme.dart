@@ -138,16 +138,6 @@ class SystemAccentColor {
   Future<void> load() async {
     WidgetsFlutterBinding.ensureInitialized();
 
-    _subscription = SystemTheme.onChange.listen((color) {
-      accent = color.accent;
-      light = color.light;
-      lighter = color.lighter;
-      lightest = color.lightest;
-      dark = color.dark;
-      darker = color.darker;
-      darkest = color.darkest;
-    });
-
     try {
       final colors = await _channel.invokeMethod(kGetSystemAccentColorMethod);
       if (colors == null) return;
@@ -165,6 +155,16 @@ class SystemAccentColor {
     } catch (_) {
       rethrow;
     }
+
+    _subscription ??= SystemTheme.onChange.listen((color) {
+      accent = color.accent;
+      light = color.light;
+      lighter = color.lighter;
+      lightest = color.lightest;
+      dark = color.dark;
+      darker = color.darker;
+      darkest = color.darkest;
+    });
   }
 
   Color? _retrieve(dynamic map) {
