@@ -26,6 +26,9 @@ flutter:
       macos:
         package: com.bruno.system_theme
         pluginClass: SystemThemePlugin
+      ios:
+        package: com.bruno.system_theme
+        pluginClass: SystemThemePlugin
       android:
         package: com.bruno.system_theme
         pluginClass: SystemThemePlugin
