@@ -28,6 +28,7 @@ extension PlatformHelpers on TargetPlatform {
       [
         TargetPlatform.windows,
         TargetPlatform.macOS,
+        TargetPlatform.iOS,
         TargetPlatform.android,
         TargetPlatform.linux,
       ].contains(this);
