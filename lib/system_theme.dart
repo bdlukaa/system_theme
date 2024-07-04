@@ -28,6 +28,7 @@ extension PlatformHelpers on TargetPlatform {
       [
         TargetPlatform.windows,
         TargetPlatform.macOS,
+        TargetPlatform.iOS,
         TargetPlatform.android,
         TargetPlatform.linux,
       ].contains(this);
@@ -54,6 +55,8 @@ class SystemTheme {
   ///   - Windows
   ///   - Web
   ///   - Android
+  ///   - iOS
+  ///   - Mac
   ///
   /// It returns [kDefaultFallbackColor] for unsupported platforms
   static final SystemAccentColor accentColor = SystemAccentColor(fallbackColor)
