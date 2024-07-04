@@ -1,3 +1,7 @@
+## [3.0.0] - [03/07/2023]
+
+* Add support for iOS ([#32](https://github.com/bdlukaa/system_theme/pull/32))
+
 ## [2.3.1] - [20/07/2023]
 
 - Fix late initialization bug when using the `onChange` stream on platforms other than Windows ([#29](https://github.com/bdlukaa/system_theme/issues/29))

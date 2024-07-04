@@ -31,7 +31,7 @@
 
 | Feature           | Android 10+ | iOS | Web | MacOs 10.4+ | Windows 10+ and XBox | Linux GTK 3+ |
 | ----------------- | :---------: | :-: | :-: | :---------: | :------------------: | :----------: |
-| Get accent color  |     ✔️      |     | ✔️  |     ✔️      |          ✔️          |      ✔️      |
+| Get accent color  |     ✔️      | ✔️  | ✔️  |     ✔️      |          ✔️          |      ✔️      |
 | Listen to changes |             |     |     |             |          ✔️          |              |
 
 ## Usage
@@ -123,3 +123,4 @@ Feel free to [open an issue](https://github.com/bdlukaa/system_theme/issues/new)
 
 - [@alexmercerind](https://github.com/alexmercerind) for the Windows implementation
 - [@pgiacomo69](https://github.com/pgiacomo69) for the accent color listener
+- [@HosamHasanRamadan](https://github.com/HosamHasanRamadan) for the iOS implementation
