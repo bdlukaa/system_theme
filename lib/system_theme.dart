@@ -170,7 +170,7 @@ class SystemAccentColor {
   Color? _retrieve(dynamic map) {
     assert(map == null || map is Map);
     if (map == null) return null;
-    return Color.fromRGBO(map['R'], map['G'], map['B'], 1.0);
+    return Color.fromARGB(map['A'] ?? 255, map['R'], map['G'], map['B']);
   }
 
   /// Releases any used resources
