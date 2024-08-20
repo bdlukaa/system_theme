@@ -35,15 +35,24 @@ class SystemThemeWeb {
 
         if (backgroundColor != null) {
           backgroundColor = backgroundColor
+              // most browsers return rgb, but some may return rgba.
+              .replaceAll('rgba', 'rgb')
               .replaceAll('rgb(', '')
               .replaceAll(')', '')
               .replaceAll(' ', '');
           final rgb = backgroundColor.split(',');
+
+          final r = int.tryParse(rgb[0]) ?? 255;
+          final g = int.tryParse(rgb[1]) ?? 255;
+          final b = int.tryParse(rgb[2]) ?? 255;
+          final a = int.tryParse(rgb[3]) ?? 255;
+
           return {
             'accent': {
-              'R': int.parse(rgb[0]),
-              'G': int.parse(rgb[1]),
-              'B': int.parse(rgb[2]),
+              'R': r,
+              'G': g,
+              'B': b,
+              'A': a,
             }
           };
         }

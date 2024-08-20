@@ -1,4 +1,8 @@
-## [3.0.0] - [03/07/2023]
+## [3.1.0] - [20/08/2024]
+
+* Support RGBA colors on web ([#31](https://github.com/bdlukaa/system_theme/issues/31))
+
+## [3.0.0] - [03/07/2024]
 
 * Add support for iOS ([#32](https://github.com/bdlukaa/system_theme/pull/32))
 
