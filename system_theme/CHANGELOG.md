@@ -1,5 +1,6 @@
 ## [3.1.0] - [20/08/2024]
 
+* [Migrate](https://dart.dev/interop/js-interop/package-web) to `package:web` over `dart:html` on web to enable WASM compatibility
 * Support RGBA colors on web ([#31](https://github.com/bdlukaa/system_theme/issues/31))
 
 ## [3.0.0] - [03/07/2024]
