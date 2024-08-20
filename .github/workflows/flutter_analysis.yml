@@ -9,6 +9,10 @@ on:
 jobs:
   package-analysis:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./system_theme
 
     steps:
       - uses: actions/checkout@v2

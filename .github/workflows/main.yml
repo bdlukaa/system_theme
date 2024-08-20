@@ -10,6 +10,10 @@ jobs:
   build_windows:
     name: Windows Client
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./system_theme/example
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -23,14 +27,16 @@ jobs:
       - run: git config --system core.longpaths true
       - name: Flutter Pub Get
         run: flutter pub get
-        working-directory: ./example
       - name: Build for Windows
         run: flutter build windows --verbose
-        working-directory: ./example
 
   build_android:
     name: Android Client
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./system_theme/example
     steps:
       - uses: actions/checkout@v3
         with:
@@ -41,15 +47,16 @@ jobs:
           channel: "stable"
           cache: true
       - run: flutter pub get
-        working-directory: ./example
       - run: flutter build apk --verbose --split-per-abi
-        working-directory: ./example
       - run: flutter build appbundle --verbose
-        working-directory: ./example
 
   build_iOS:
     name: iOS Client
     runs-on: macos-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./system_theme/example
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -63,15 +70,16 @@ jobs:
           cache: true
 
       - run: flutter pub get
-        working-directory: ./example
       - run: flutter build ios --verbose --release --no-codesign
-        working-directory: ./example
       - run: flutter build ipa --verbose --release --no-codesign
-        working-directory: ./example
 
   build_macOS:
     name: macOS Client
     runs-on: macos-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./system_theme/example
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -85,13 +93,15 @@ jobs:
           cache: true
 
       - run: flutter pub get
-        working-directory: ./example
       - run: flutter build macos
-        working-directory: ./example
 
   build_linux:
     name: Linux Client
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./system_theme/example
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -106,13 +116,15 @@ jobs:
           channel: "stable"
           cache: true
       - run: flutter pub get
-        working-directory: ./example
       - run: flutter build linux --verbose
-        working-directory: ./example
 
   build_web:
     name: Web Client
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./system_theme/example
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -125,6 +137,4 @@ jobs:
           channel: "stable"
           cache: true
       - run: flutter pub get
-        working-directory: ./example
       - run: flutter build web --verbose
-        working-directory: ./example
