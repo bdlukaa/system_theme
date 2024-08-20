@@ -40,23 +40,24 @@ class _MyAppState extends State<MyApp> {
             return Expanded(
               child: Container(
                 color: color,
-                alignment: Alignment.bottomCenter,
-                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                alignment: Alignment.center,
                 child: Text(
                   [
-                    'Lightest',
-                    'Lighter',
-                    'Light',
-                    'Default',
-                    'Dark',
-                    'Darker',
-                    'Darkest',
-                  ][colors.indexOf(color)],
+                        'Lightest',
+                        'Lighter',
+                        'Light',
+                        'Default',
+                        'Dark',
+                        'Darker',
+                        'Darkest',
+                      ][colors.indexOf(color)] +
+                      '\n${color.toHex()}',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: color.computeLuminance() >= 0.5
                             ? Colors.black
                             : Colors.white,
                       ),
+                  textAlign: TextAlign.center,
                 ),
               ),
             );
@@ -64,5 +65,11 @@ class _MyAppState extends State<MyApp> {
         ]),
       );
     });
+  }
+}
+
+extension ColorExtension on Color {
+  String toHex() {
+    return '#${value.toRadixString(16).padLeft(8, '0').substring(2, 8)}';
   }
 }

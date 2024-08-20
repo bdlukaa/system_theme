@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:html' as html;
+import 'package:web/web.dart' as web;
 
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
@@ -23,11 +23,16 @@ class SystemThemeWeb {
   Future<dynamic> handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case 'SystemTheme.accentColor':
-        final e = html.document.body;
+        final e = web.document.body;
         final currentBackgroundColor = e?.style.backgroundColor;
-        e?.style.backgroundColor = "highlight";
-        String? backgroundColor = e?.getComputedStyle().backgroundColor;
-        e?.style.backgroundColor = currentBackgroundColor;
+        e?.style.backgroundColor = 'highlight';
+        String? backgroundColor =
+            e?.computedStyleMap().get('background-color').toString();
+
+        if (currentBackgroundColor != null) {
+          e?.style.backgroundColor = currentBackgroundColor;
+        }
+
         if (backgroundColor != null) {
           backgroundColor = backgroundColor
               .replaceAll('rgb(', '')
