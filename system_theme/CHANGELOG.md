@@ -2,6 +2,7 @@
 
 * [Migrate](https://dart.dev/interop/js-interop/package-web) to `package:web` over `dart:html` on web to enable WASM compatibility
 * Support RGBA colors on web ([#31](https://github.com/bdlukaa/system_theme/issues/31))
+* Use `compileSdkVersion` version `31` on Android ([#34](https://github.com/bdlukaa/system_theme/issues/34))
 
 ## [3.0.0] - [03/07/2024]
 
