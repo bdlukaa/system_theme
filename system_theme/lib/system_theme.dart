@@ -1,8 +1,7 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart'
-    show TargetPlatform, debugPrint, kIsWeb;
+    show TargetPlatform, debugPrint, defaultTargetPlatform, kIsWeb;
 import 'package:flutter/services.dart'
     show Color, EventChannel, MethodChannel, MissingPluginException;
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
@@ -75,7 +74,9 @@ class SystemTheme {
   /// });
   /// ```
   static Stream<SystemAccentColor> get onChange {
-    if (kIsWeb || !Platform.isWindows) return Stream.value(accentColor);
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.windows) {
+      return Stream.value(accentColor);
+    }
 
     return _eventChannel.receiveBroadcastStream().map((event) {
       return SystemAccentColor._fromMap(event);

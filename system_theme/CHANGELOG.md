@@ -1,3 +1,7 @@
+## [3.1.1] - [19/09/2024]
+
+* Fix Android build ([#35](https://github.com/bdlukaa/system_theme/pull/35), [#36](https://github.com/bdlukaa/system_theme/pull/36))
+
 ## [3.1.0] - [20/08/2024]
 
 * [Migrate](https://dart.dev/interop/js-interop/package-web) to `package:web` over `dart:html` on web to enable WASM compatibility
