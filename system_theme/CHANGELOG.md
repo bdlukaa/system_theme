@@ -1,3 +1,7 @@
+## [3.1.2] - [04/10/2024]
+
+* fix: Add target java version to avoid compile error ([#39](https://github.com/bdlukaa/system_theme/pull/39))
+
 ## [3.1.1] - [19/09/2024]
 
 * Fix Android build ([#35](https://github.com/bdlukaa/system_theme/pull/35), [#36](https://github.com/bdlukaa/system_theme/pull/36))
