@@ -70,6 +70,6 @@ class _MyAppState extends State<MyApp> {
 
 extension ColorExtension on Color {
   String toHex() {
-    return '#${value.toRadixString(16).padLeft(8, '0').substring(2, 8)}';
+    return '#${toARGB32().toRadixString(16).padLeft(8, '0').substring(2, 8)}';
   }
 }
