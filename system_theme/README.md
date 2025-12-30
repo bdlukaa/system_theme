@@ -29,7 +29,7 @@
 
 ### Supported platforms
 
-| Feature           | Android 10+ | iOS | Web | MacOs 10.4+ | Windows 10+ and XBox | Linux GTK 3+ |
+| Feature           | Android 10+ | iOS | Web | MacOs 10.14+ | Windows 10+ and XBox | Linux GTK 3+ |
 | ----------------- | :---------: | :-: | :-: | :---------: | :------------------: | :----------: |
 | Get accent color  |     ✔️      | ✔️  | ✔️  |     ✔️      |          ✔️          |      ✔️      |
 | Listen to changes |             |     |     |     ✔️       |          ✔️          |              |
