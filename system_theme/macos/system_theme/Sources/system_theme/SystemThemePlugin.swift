@@ -25,12 +25,15 @@ public class SystemThemePlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
 
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
         self.eventSink = events
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(systemColorsDidChange),
-            name: NSNotification.Name("NSSystemColorsDidChangeNotification"),
-            object: nil
-        )
+        
+        if #available(macOS 10.14, *) {
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(systemColorsDidChange),
+                name: NSNotification.Name("NSSystemColorsDidChangeNotification"),
+                object: nil
+            )
+        }
         return nil
     }
 
