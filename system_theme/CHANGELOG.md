@@ -1,3 +1,7 @@
+## [3.2.0] - [30/12/2025]
+
+* feat: Reactive theming for macOS ([#45](https://github.com/bdlukaa/system_theme/pull/45))
+
 ## [3.1.2] - [04/10/2024]
 
 * fix: Add target java version to avoid compile error ([#39](https://github.com/bdlukaa/system_theme/pull/39))
