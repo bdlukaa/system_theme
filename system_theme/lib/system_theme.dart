@@ -31,6 +31,10 @@ extension PlatformHelpers on TargetPlatform {
         TargetPlatform.android,
         TargetPlatform.linux,
       ].contains(this);
+
+  /// Whether this platform supports listening to accent color changes.
+  bool get supportsListeningToAccentColorChanges =>
+      !kIsWeb && [TargetPlatform.windows, TargetPlatform.macOS].contains(this);
 }
 
 /// Class to return current system theme state on Windows.
@@ -74,7 +78,7 @@ class SystemTheme {
   /// });
   /// ```
   static Stream<SystemAccentColor> get onChange {
-    if (kIsWeb || defaultTargetPlatform != TargetPlatform.windows) {
+    if (!defaultTargetPlatform.supportsListeningToAccentColorChanges) {
       return Stream.value(accentColor);
     }
 
