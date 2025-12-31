@@ -1,6 +1,7 @@
 ## [3.2.0] - [30/12/2025]
 
 * feat: Reactive theming for macOS ([#45](https://github.com/bdlukaa/system_theme/pull/45))
+* chore: Migrate iOS and macos to Swift Package Manager.
 
 ## [3.1.2] - [04/10/2024]
 

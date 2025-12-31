@@ -22,15 +22,15 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return SystemThemeBuilder(builder: (context, accent) {
+    return SystemThemeBuilder(builder: (context, color) {
       final colors = [
-        accent.lightest,
-        accent.lighter,
-        accent.light,
-        accent.accent,
-        accent.dark,
-        accent.darker,
-        accent.darkest,
+        color.lightest,
+        color.lighter,
+        color.light,
+        color.accent,
+        color.dark,
+        color.darker,
+        color.darkest,
       ];
       return Scaffold(
         body: SafeArea(

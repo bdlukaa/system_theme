@@ -9,8 +9,8 @@ typedef ThemeWidgetBuilder = Widget Function(
 /// A widget that rebuilds when the system theme changes.
 ///
 /// ```dart
-/// SystemThemeBuilder(builder: (context, accent) {
-///  return ColoredBox(color: accent.accent);
+/// SystemThemeBuilder(builder: (context, color) {
+///  return ColoredBox(color: color.accent);
 /// });
 /// ```
 ///
@@ -27,6 +27,7 @@ class SystemThemeBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<SystemAccentColor>(
+      initialData: SystemTheme.accentColor,
       stream: SystemTheme.onChange,
       builder: (context, snapshot) {
         return builder(context, snapshot.data ?? SystemTheme.accentColor);

@@ -1,5 +1,5 @@
 <div>
-  <h1 align="center">system_theme</h1>
+  <h3 align="center">system_theme</h3>
   <p align="center" >
     <a title="Discord" href="https://discord.gg/674gpDQUVq">
       <img src="https://img.shields.io/discord/809528329337962516?label=discord&logo=discord" />
@@ -7,26 +7,22 @@
     <a title="Pub" href="https://pub.dartlang.org/packages/system_theme" >
       <img src="https://img.shields.io/pub/v/system_theme.svg?style=popout&include_prereleases" />
     </a>
-    <a title="Github License">
-      <img src="https://img.shields.io/github/license/bdlukaa/system_theme" />
-    </a>
   </p>
   <p align="center">
-    <a title="Patreon" href="https://patreon.com/bdlukaa">
-      <img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dbdlukaa%26type%3Dpatrons&style=for-the-badge">
-    </a>
-  </p>
-  <p align="center">
-  A flutter plugin to get the current system theme information
+  A flutter plugin to retrieve the current system theme information
   </p>
 </div>
 
 ### Supported platforms
 
-| Feature           | Android 10+ | iOS | Web | MacOs 10.14+ | Windows 10+ and XBox | Linux GTK 3+ |
-| ----------------- | :---------: | :-: | :-: | :---------: | :------------------: | :----------: |
-| Get accent color  |     ✔️      | ✔️  | ✔️  |     ✔️      |          ✔️          |      ✔️      |
-| Listen to changes |             |     |     |     ✔️       |          ✔️          |              |
+| Platform | Accent Color | Listen to Changes | Minimum Version |
+| :--- | :---: | :---: | :--- |
+| **Android** | ✔️ | | Android 10+ |
+| **iOS** | ✔️ | | iOS 14+ |
+| **Windows** | ✔️ | ✔️ | Windows 10+ |
+| **macOS** | ✔️ | ✔️ | Mojave 10.14+ |
+| **Linux** | ✔️ | | GTK 3+ |
+| **Web** | ✔️ | | All modern browsers |
 
 ## Usage
 
@@ -88,25 +84,16 @@ SystemTheme.onChange.listen((event) {
 Alteratively, you can the `SystemThemeBuilder` widget to listen to changes on the system accent color:
 
 ```dart
-SystemThemeBuilder(builder: (context, accent) {
-  return ColoredBox(color: accent.accentColor);
-});
-```
-
-### Checking if accent color is supported
-
-The `flutter/foundation` package provides a `defaultTargetPlatform` getter, which can be used to check what platform the current app is running on.
-
-You can check if the current platform supports accent colors using this extension method:
-
-```dart
-import 'package:flutter/foundation.dart' show defaultTargetPlatform;
-
-void main() {
-  final supported = defaultTargetPlatform.supportsAccentColor;
-
-  print('Accent color is: ${supported ? 'supported' : 'not supported'} on the current platform');
-}
+SystemThemeBuilder(
+  builder: (context, color) {
+    return ColoredBox(
+      color: color.accent, // Automatically updates when system theme changes
+      child: const Center(
+        child: Text('System Accent Color'),
+      ),
+    );
+  },
+);
 ```
 
 ## Contribution
