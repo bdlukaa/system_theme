@@ -4,16 +4,17 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'system_theme'
-  s.version          = '0.0.1'
-  s.summary          = 'A new Flutter plugin project.'
+  s.version          = '3.2.0'
+  s.summary          = 'A Flutter Plugin to retrieve the system theme.'
   s.description      = <<-DESC
-A new Flutter plugin project.
+A plugin to get the current system theme info. Supports Android, Web, Windows, Linux and macOS
                        DESC
-  s.homepage         = 'http://example.com'
+  s.homepage         = 'https://github.com/bdlukaa/system_theme'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
+  s.author           = { 'Bruno D Luka' => 'email@example.com' }
+
   s.source           = { :path => '.' }
-  s.source_files = 'Classes/**/*'
+  s.source_files     = 'system_theme/Sources/system_theme/**/*.swift'
   s.dependency 'Flutter'
   s.platform = :ios, '11.0'
 

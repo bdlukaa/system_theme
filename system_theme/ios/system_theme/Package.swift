@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "system_theme",
     platforms: [
-        .macOS("10.15")
+        .iOS("13")
     ],
     products: [
         .library(name: "system-theme", targets: ["system_theme"])
