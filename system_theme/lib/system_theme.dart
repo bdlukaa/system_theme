@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart'
     show TargetPlatform, debugPrint, defaultTargetPlatform, kIsWeb;
+import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart'
     show Color, EventChannel, MethodChannel, MissingPluginException;
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
@@ -51,6 +52,12 @@ class SystemTheme {
   ///
   /// Returns [kDefaultFallbackColor] if not set
   static Color fallbackColor = kDefaultFallbackColor;
+
+  /// Whether to automatically adjust lightness if the color if the platform
+  /// doesn't support it natively.
+  ///
+  /// Enabled by default.
+  static bool autoAdjustLightness = true;
 
   /// Get the system accent color.
   ///
@@ -133,13 +140,7 @@ class SystemAccentColor {
 
   SystemAccentColor._fromMap(dynamic colors)
       : defaultAccentColor = SystemTheme.fallbackColor {
-    accent = _retrieve(colors['accent']) ?? defaultAccentColor;
-    light = _retrieve(colors['light']) ?? accent;
-    lighter = _retrieve(colors['lighter']) ?? accent;
-    lightest = _retrieve(colors['lightest']) ?? accent;
-    dark = _retrieve(colors['dark']) ?? accent;
-    darker = _retrieve(colors['darker']) ?? accent;
-    darkest = _retrieve(colors['darkest']) ?? accent;
+    _retrieveFromColors(colors);
   }
 
   /// Updates the fetched accent colors on Windows.
@@ -149,14 +150,7 @@ class SystemAccentColor {
     try {
       final colors = await _channel.invokeMethod(kGetSystemAccentColorMethod);
       if (colors == null) return;
-
-      accent = _retrieve(colors['accent'])!;
-      light = _retrieve(colors['light']) ?? accent;
-      lighter = _retrieve(colors['lighter']) ?? accent;
-      lightest = _retrieve(colors['lightest']) ?? accent;
-      dark = _retrieve(colors['dark']) ?? accent;
-      darker = _retrieve(colors['darker']) ?? accent;
-      darkest = _retrieve(colors['darkest']) ?? accent;
+      _retrieveFromColors(colors);
     } on MissingPluginException {
       debugPrint('system_theme does not implement the current platform');
       return;
@@ -173,6 +167,25 @@ class SystemAccentColor {
       darker = color.darker;
       darkest = color.darkest;
     });
+  }
+
+  void _retrieveFromColors(dynamic colors) {
+    accent = _retrieve(colors['accent']) ?? defaultAccentColor;
+
+    light = _retrieve(colors['light']) ?? _adjustLightness(accent, 0.1);
+    lighter = _retrieve(colors['lighter']) ?? _adjustLightness(accent, 0.2);
+    lightest = _retrieve(colors['lightest']) ?? _adjustLightness(accent, 0.3);
+
+    dark = _retrieve(colors['dark']) ?? _adjustLightness(accent, -0.1);
+    darker = _retrieve(colors['darker']) ?? _adjustLightness(accent, -0.2);
+    darkest = _retrieve(colors['darkest']) ?? _adjustLightness(accent, -0.3);
+  }
+
+  Color _adjustLightness(Color color, double amount) {
+    if (!SystemTheme.autoAdjustLightness) return color;
+    final hsl = HSLColor.fromColor(color);
+    final newLightness = (hsl.lightness + amount).clamp(0.0, 1.0);
+    return hsl.withLightness(newLightness).toColor();
   }
 
   Color? _retrieve(dynamic map) {
