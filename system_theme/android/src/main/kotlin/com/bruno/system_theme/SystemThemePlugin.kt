@@ -26,16 +26,19 @@ class SystemThemePlugin: FlutterPlugin, ActivityAware, MethodCallHandler {
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
     when (call.method) {
         "SystemTheme.accentColor" -> {
-          val accentColor = getDeviceAccentColor(activity)
-          val hexColor = java.lang.String.format("#%06X", 0xFFFFFF and accentColor)
-          val rgb = getRGB(hexColor)
+          val color = getDeviceAccentColor(activity)
+          val r = (color shr 16) and 0xFF
+          val g = (color shr 8) and 0xFF
+          val b = color and 0xFF
+          // val a = (color shr 24) and 0xFF 
+
           result.success(hashMapOf<String, Any?>(
-                  "accent" to hashMapOf<String, Any?>(
-                          "R" to rgb[0],
-                          "G" to rgb[1],
-                          "B" to rgb[2],
-                          "A" to 1
-                  )
+              "accent" to hashMapOf<String, Any?>(
+                  "R" to r,
+                  "G" to g,
+                  "B" to b,
+                  "A" to 255
+              )
           ))
         }
         else -> {
@@ -49,15 +52,6 @@ class SystemThemePlugin: FlutterPlugin, ActivityAware, MethodCallHandler {
     val ctx = ContextThemeWrapper(context, R.style.Theme_DeviceDefault)
     ctx.theme.resolveAttribute(android.R.attr.colorAccent, value, true)
     return value.data
-  }
-
-  private fun getRGB(rgb: String): IntArray {
-    var color = rgb;
-    if (rgb.startsWith("#")) color = rgb.replace("#", "");
-    val r = color.substring(0, 2).toInt(16) // 16 for hex
-    val g = color.substring(2, 4).toInt(16) // 16 for hex
-    val b = color.substring(4, 6).toInt(16) // 16 for hex
-    return intArrayOf(r, g, b)
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
