@@ -1,10 +1,14 @@
+## 0.0.4
+
+- Correctly handle colors without alpha channel.
+
 ## 0.0.3
 
-- Support RGBA colors
+- Support RGBA colors.
 
 ## 0.0.2
 
-- Support for getting accent color
+- Support for getting accent color.
 
 ## 0.0.1
 

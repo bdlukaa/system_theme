@@ -17,9 +17,6 @@ class SystemThemeWeb {
     channel.setMethodCallHandler(pluginInstance.handleMethodCall);
   }
 
-  /// Handles method calls over the MethodChannel of this plugin.
-  /// Note: Check the "federated" architecture for a new way of doing this:
-  /// https://flutter.dev/go/federated-plugins
   Future<dynamic> handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case 'SystemTheme.accentColor':
@@ -42,10 +39,17 @@ class SystemThemeWeb {
               .replaceAll(' ', '');
           final rgb = backgroundColor.split(',');
 
-          final r = int.tryParse(rgb[0]) ?? 255;
-          final g = int.tryParse(rgb[1]) ?? 255;
-          final b = int.tryParse(rgb[2]) ?? 255;
-          final a = int.tryParse(rgb[3]) ?? 255;
+          if (rgb.length < 3) {
+            throw PlatformException(
+              code: 'Unsupported',
+              details: 'The accent color is not available in this browser.',
+            );
+          }
+
+          final r = int.tryParse(rgb.firstOrNull ?? '') ?? 255;
+          final g = int.tryParse(rgb.elementAtOrNull(1) ?? '') ?? 255;
+          final b = int.tryParse(rgb.elementAtOrNull(2) ?? '') ?? 255;
+          final a = int.tryParse(rgb.elementAtOrNull(3) ?? '') ?? 255;
 
           return {
             'accent': {
