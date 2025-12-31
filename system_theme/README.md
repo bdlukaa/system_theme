@@ -21,12 +21,6 @@
   </p>
 </div>
 
-- [Supported platforms](#supported-platforms)
-- [Usage](#usage)
-  - [Get system accent color](#get-system-accent-color)
-- [Contribution](#contribution)
-  - [Acknowlegments](#acknowlegments)
-
 ### Supported platforms
 
 | Feature           | Android 10+ | iOS | Web | MacOs 10.14+ | Windows 10+ and XBox | Linux GTK 3+ |
