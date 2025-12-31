@@ -1,8 +1,8 @@
-## [3.2.0] - [30/12/2025]
+## [3.2.0] - [31/12/2025]
 
 * feat: Reactive theming for macOS ([#45](https://github.com/bdlukaa/system_theme/pull/45))
-* chore: Migrate iOS and macos to Swift Package Manager.
-* feat: Automatically adjust lightness if the platform doesn't support it natively.
+* chore: Migrate iOS and macOS to Swift Package Manager. ([#46](https://github.com/bdlukaa/system_theme/pull/46), [#45](https://github.com/bdlukaa/system_theme/pull/45))
+* feat: Automatically adjust lightness if the platform doesn't support it natively. ([#46](https://github.com/bdlukaa/system_theme/pull/46))
   This is enabled by default. You can disable it by setting `SystemTheme.autoAdjustLightness` to `false`.
 
 ## [3.1.2] - [04/10/2024]
