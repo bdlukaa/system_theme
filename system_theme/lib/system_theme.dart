@@ -67,6 +67,7 @@ class SystemTheme {
   ///   - Android
   ///   - iOS
   ///   - Mac
+  ///   - Linux
   ///
   /// It returns [kDefaultFallbackColor] for unsupported platforms
   static final SystemAccentColor accentColor = SystemAccentColor(fallbackColor)
