@@ -140,7 +140,7 @@ class SystemAccentColor {
   }
 
   SystemAccentColor._fromMap(dynamic colors)
-      : defaultAccentColor = SystemTheme.fallbackColor {
+    : defaultAccentColor = SystemTheme.fallbackColor {
     _retrieveFromColors(colors);
   }
 

@@ -11,8 +11,12 @@ void main() {
   final List<MethodCall> log = <MethodCall>[];
 
   // Helper to create a color map in the format the plugin expects
-  Map<String, dynamic> createColorMap(
-      {int r = 0, int g = 0, int b = 0, int a = 255}) {
+  Map<String, dynamic> createColorMap({
+    int r = 0,
+    int g = 0,
+    int b = 0,
+    int a = 255,
+  }) {
     return {'R': r, 'G': g, 'B': b, 'A': a};
   }
 
@@ -35,14 +39,12 @@ void main() {
 
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-      log.add(methodCall);
-      if (methodCall.method == 'SystemTheme.accentColor') {
-        return {
-          'accent': createColorMap(r: 0, g: 0, b: 255),
-        };
-      }
-      return null;
-    });
+          log.add(methodCall);
+          if (methodCall.method == 'SystemTheme.accentColor') {
+            return {'accent': createColorMap(r: 0, g: 0, b: 255)};
+          }
+          return null;
+        });
   });
 
   tearDown(() {
@@ -63,11 +65,15 @@ void main() {
     test('Check platform support for listening to changes', () {
       debugDefaultTargetPlatformOverride = TargetPlatform.windows;
       expect(
-          defaultTargetPlatform.supportsListeningToAccentColorChanges, isTrue);
+        defaultTargetPlatform.supportsListeningToAccentColorChanges,
+        isTrue,
+      );
 
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
       expect(
-          defaultTargetPlatform.supportsListeningToAccentColorChanges, isFalse);
+        defaultTargetPlatform.supportsListeningToAccentColorChanges,
+        isFalse,
+      );
     });
 
     test('Loads accent color correctly (Singleton)', () async {
@@ -82,8 +88,8 @@ void main() {
     test('Handles MissingPluginException gracefully', () async {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-        throw MissingPluginException();
-      });
+            throw MissingPluginException();
+          });
 
       final testTheme = SystemAccentColor(kDefaultFallbackColor);
 
@@ -97,8 +103,8 @@ void main() {
 
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-        return null;
-      });
+            return null;
+          });
 
       final testTheme = SystemAccentColor(customFallback);
 
@@ -114,10 +120,8 @@ void main() {
 
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-        return {
-          'accent': createColorMap(r: 0, g: 0, b: 255),
-        };
-      });
+            return {'accent': createColorMap(r: 0, g: 0, b: 255)};
+          });
 
       final testTheme = SystemAccentColor(kDefaultFallbackColor);
       await testTheme.load();
@@ -134,11 +138,11 @@ void main() {
 
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-        return {
-          'accent': createColorMap(r: 0, g: 0, b: 255),
-          'light': createColorMap(r: 0, g: 255, b: 0),
-        };
-      });
+            return {
+              'accent': createColorMap(r: 0, g: 0, b: 255),
+              'light': createColorMap(r: 0, g: 255, b: 0),
+            };
+          });
 
       final testTheme = SystemAccentColor(kDefaultFallbackColor);
       await testTheme.load();
@@ -151,10 +155,8 @@ void main() {
 
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-        return {
-          'accent': createColorMap(r: 0, g: 0, b: 255),
-        };
-      });
+            return {'accent': createColorMap(r: 0, g: 0, b: 255)};
+          });
 
       final testTheme = SystemAccentColor(kDefaultFallbackColor);
       await testTheme.load();
