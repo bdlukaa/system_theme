@@ -1,6 +1,6 @@
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:system_theme/system_theme.dart';
-import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,32 +40,43 @@ class _MyAppState extends State<MyApp> {
                 Text(
                   'Accent color: ${defaultTargetPlatform.supportsAccentColor ? 'supported' : 'not supported'}',
                 ),
-                ...colors.map((color) {
-                  return Expanded(
-                    child: Container(
-                      color: color,
-                      alignment: Alignment.center,
-                      child: Text(
-                        [
-                              'Lightest',
-                              'Lighter',
-                              'Light',
-                              'Default',
-                              'Dark',
-                              'Darker',
-                              'Darkest',
-                            ][colors.indexOf(color)] +
-                            '\n${color.toHex()}',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: color.computeLuminance() >= 0.5
-                              ? Colors.black
-                              : Colors.white,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  );
-                }).toList(),
+                Expanded(
+                  child: Flex(
+                    direction: switch (MediaQuery.orientationOf(context)) {
+                      Orientation.portrait => Axis.vertical,
+                      Orientation.landscape => Axis.horizontal,
+                    },
+                    children: [
+                      ...colors.map((color) {
+                        return Expanded(
+                          child: Container(
+                            color: color,
+                            alignment: Alignment.center,
+                            child: Text(
+                              [
+                                    'Lightest',
+                                    'Lighter',
+                                    'Light',
+                                    'Default',
+                                    'Dark',
+                                    'Darker',
+                                    'Darkest',
+                                  ][colors.indexOf(color)] +
+                                  '\n${color.toHex()}',
+                              style: Theme.of(context).textTheme.titleLarge
+                                  ?.copyWith(
+                                    color: color.computeLuminance() >= 0.5
+                                        ? Colors.black
+                                        : Colors.white,
+                                  ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
