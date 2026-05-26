@@ -20,7 +20,7 @@ class SystemThemeBuilder extends StatelessWidget {
   final ThemeWidgetBuilder builder;
 
   /// Creates a system theme builder.
-  const SystemThemeBuilder({Key? key, required this.builder}) : super(key: key);
+  const SystemThemeBuilder({super.key, required this.builder});
 
   @override
   Widget build(BuildContext context) {

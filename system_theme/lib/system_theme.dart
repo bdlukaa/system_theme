@@ -9,17 +9,6 @@ import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
 export 'system_theme_builder.dart';
 
-/// Default system accent color.
-const kDefaultFallbackColor = Color(0xff00b7c3);
-
-const kGetSystemAccentColorMethod = 'SystemTheme.accentColor';
-
-/// Platform event channel handler for system theme changes.
-const _eventChannel = EventChannel('system_theme_events/switch_callback');
-
-/// Platform channel handler for invoking native methods.
-const MethodChannel _channel = MethodChannel('system_theme');
-
 extension PlatformHelpers on TargetPlatform {
   /// A helper that can be used to check if the current platform supports
   /// accent colors.
@@ -48,6 +37,19 @@ extension PlatformHelpers on TargetPlatform {
 /// [onChange] returns a stream of [SystemAccentColor] that notifies when the
 /// system accent color changes.
 class SystemTheme {
+  /// Platform channel handler for invoking native methods.
+  static const MethodChannel _channel = MethodChannel('system_theme');
+
+  static const getSystemAccentColorMethodName = 'SystemTheme.accentColor';
+
+  /// Platform event channel handler for system theme changes.
+  static const _eventChannel = EventChannel(
+    'system_theme_events/switch_callback',
+  );
+
+  /// Default system accent color.
+  static const kDefaultFallbackColor = Color(0xff00b7c3);
+
   /// The fallback color
   ///
   /// Returns [kDefaultFallbackColor] if not set
@@ -149,7 +151,9 @@ class SystemAccentColor {
     WidgetsFlutterBinding.ensureInitialized();
 
     try {
-      final colors = await _channel.invokeMethod(kGetSystemAccentColorMethod);
+      final colors = await SystemTheme._channel.invokeMethod(
+        SystemTheme.getSystemAccentColorMethodName,
+      );
       if (colors == null) return;
       _retrieveFromColors(colors);
     } on MissingPluginException {

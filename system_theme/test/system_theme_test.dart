@@ -22,19 +22,19 @@ void main() {
 
   void resetSingleton() {
     final color = SystemTheme.accentColor;
-    color.accent = kDefaultFallbackColor;
-    color.light = kDefaultFallbackColor;
-    color.lighter = kDefaultFallbackColor;
-    color.lightest = kDefaultFallbackColor;
-    color.dark = kDefaultFallbackColor;
-    color.darker = kDefaultFallbackColor;
-    color.darkest = kDefaultFallbackColor;
+    color.accent = SystemTheme.kDefaultFallbackColor;
+    color.light = SystemTheme.kDefaultFallbackColor;
+    color.lighter = SystemTheme.kDefaultFallbackColor;
+    color.lightest = SystemTheme.kDefaultFallbackColor;
+    color.dark = SystemTheme.kDefaultFallbackColor;
+    color.darker = SystemTheme.kDefaultFallbackColor;
+    color.darkest = SystemTheme.kDefaultFallbackColor;
   }
 
   setUp(() {
     log.clear();
     resetSingleton();
-    SystemTheme.fallbackColor = kDefaultFallbackColor;
+    SystemTheme.fallbackColor = SystemTheme.kDefaultFallbackColor;
     SystemTheme.autoAdjustLightness = true;
 
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
@@ -91,11 +91,11 @@ void main() {
             throw MissingPluginException();
           });
 
-      final testTheme = SystemAccentColor(kDefaultFallbackColor);
+      final testTheme = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
 
       await testTheme.load();
 
-      expect(testTheme.accent, kDefaultFallbackColor);
+      expect(testTheme.accent, SystemTheme.kDefaultFallbackColor);
     });
 
     test('Respects custom fallback color', () async {
@@ -123,7 +123,7 @@ void main() {
             return {'accent': createColorMap(r: 0, g: 0, b: 255)};
           });
 
-      final testTheme = SystemAccentColor(kDefaultFallbackColor);
+      final testTheme = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
       await testTheme.load();
 
       expect(testTheme.accent, const Color(0xFF0000FF));
@@ -144,7 +144,7 @@ void main() {
             };
           });
 
-      final testTheme = SystemAccentColor(kDefaultFallbackColor);
+      final testTheme = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
       await testTheme.load();
 
       expect(testTheme.light, platformLightColor);
@@ -158,7 +158,7 @@ void main() {
             return {'accent': createColorMap(r: 0, g: 0, b: 255)};
           });
 
-      final testTheme = SystemAccentColor(kDefaultFallbackColor);
+      final testTheme = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
       await testTheme.load();
 
       expect(testTheme.light, testTheme.accent);
