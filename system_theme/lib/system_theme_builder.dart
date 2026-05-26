@@ -1,10 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:system_theme/system_theme.dart';
 
-typedef ThemeWidgetBuilder = Widget Function(
-  BuildContext context,
-  SystemAccentColor accent,
-);
+typedef ThemeWidgetBuilder =
+    Widget Function(BuildContext context, SystemAccentColor accent);
 
 /// A widget that rebuilds when the system theme changes.
 ///
