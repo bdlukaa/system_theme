@@ -1,3 +1,7 @@
+## 0.0.5
+
+* Upgrade package:web
+
 ## 0.0.4
 
 - Correctly handle colors without alpha channel.
