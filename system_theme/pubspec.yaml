@@ -1,6 +1,6 @@
 name: system_theme
 description: A Flutter Plugin to retrieve and listen to the system's accent color. Supports Android, iOS, Web, Windows, macOS, and Linux.
-version: 3.2.0
+version: 3.3.0
 repository: https://github.com/bdlukaa/system_theme
 homepage: https://github.com/bdlukaa/system_theme/tree/master/system_theme
 
@@ -9,7 +9,7 @@ environment:
   flutter: ">=3.44.0"
 
 dependencies:
-  system_theme_web: ^0.0.4
+  system_theme_web: ^0.0.5
     # path: ../system_theme_web/
   flutter:
     sdk: flutter

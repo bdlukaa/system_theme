@@ -15,14 +15,14 @@
 
 ### Supported platforms
 
-| Platform | Accent Color | Listen to Changes | Minimum Version |
-| :--- | :---: | :---: | :--- |
-| **Android** | ✔️ | | Android 10+ |
-| **iOS** | ✔️ | | iOS 14+ |
-| **Windows** | ✔️ | ✔️ | Windows 10+ |
-| **macOS** | ✔️ | ✔️ | Mojave 10.14+ |
-| **Linux** | ✔️ | | GTK 3+ |
-| **Web** | ✔️ | | All modern browsers |
+| Platform    | Accent Color | Listen to Color Changes | Minimum Version     |
+| :---------- | :----------: | :---------------------: | :------------------ |
+| **Android** |      ✔️      |                         | Android 10+         |
+| **iOS**     |      ✔️      |                         | iOS 14+             |
+| **Windows** |      ✔️      |           ✔️            | Windows 10+         |
+| **macOS**   |      ✔️      |           ✔️            | Mojave 10.14+       |
+| **Linux**   |      ✔️      |                         | GTK 3+              |
+| **Web**     |      ✔️      |                         | All modern browsers |
 
 ## Usage
 
@@ -105,3 +105,4 @@ Feel free to [open an issue](https://github.com/bdlukaa/system_theme/issues/new)
 - [@alexmercerind](https://github.com/alexmercerind) for the Windows implementation
 - [@pgiacomo69](https://github.com/pgiacomo69) for the accent color listener
 - [@HosamHasanRamadan](https://github.com/HosamHasanRamadan) for the iOS implementation
+- [@kjeremy](https://github.com/kjeremy) for the [Android Kotlin Migration](https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin)

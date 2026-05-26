@@ -1,3 +1,7 @@
+## [3.3.0] - [26/05/2026]
+
+* android: [Migrate to Built-in Kotlin](https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin) ([#49](https://github.com/bdlukaa/system_theme/pull/49))
+
 ## [3.2.0] - [31/12/2025]
 
 * feat: Reactive theming for macOS ([#45](https://github.com/bdlukaa/system_theme/pull/45))
