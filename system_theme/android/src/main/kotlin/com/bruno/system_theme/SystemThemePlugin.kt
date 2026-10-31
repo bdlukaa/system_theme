@@ -1,7 +1,6 @@
 package com.bruno.system_theme
 
 import android.R
-import android.app.Activity
 import android.content.Context
 import android.content.res.Resources
 import android.os.Build
@@ -9,25 +8,25 @@ import android.util.TypedValue
 import android.view.ContextThemeWrapper
 import androidx.annotation.NonNull
 import io.flutter.embedding.engine.plugins.FlutterPlugin
-import io.flutter.embedding.engine.plugins.activity.ActivityAware
-import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 
-class SystemThemePlugin: FlutterPlugin, ActivityAware, MethodCallHandler {
-  private lateinit var channel : MethodChannel
-  private lateinit var activity: Activity
+class SystemThemePlugin: FlutterPlugin, MethodCallHandler {
+  private var channel: MethodChannel? = null
+  private var applicationContext: Context? = null
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+    applicationContext = flutterPluginBinding.applicationContext
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "system_theme")
-    channel.setMethodCallHandler(this)
+    channel?.setMethodCallHandler(this)
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
     when (call.method) {
         "SystemTheme.accentColor" -> {
-          val color = getDeviceAccentColor(activity)
+          val context = applicationContext
+          val color = context?.let { getDeviceAccentColor(it) }
           if (color == null) {
             result.success(null)
             return
@@ -83,19 +82,9 @@ class SystemThemePlugin: FlutterPlugin, ActivityAware, MethodCallHandler {
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-    channel.setMethodCallHandler(null)
+    channel?.setMethodCallHandler(null)
+    channel = null
+    applicationContext = null
   }
-
-  override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-    activity = binding.activity
-  }
-
-  override fun onDetachedFromActivityForConfigChanges() {}
-
-  override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-      activity = binding.activity
-  }
-
-  override fun onDetachedFromActivity() {}
 
 }
