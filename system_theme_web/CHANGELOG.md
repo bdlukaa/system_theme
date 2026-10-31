@@ -1,3 +1,7 @@
+## [next]
+
+* Retrieve browser CSS colors without depending on `computedStyleMap()`.
+
 ## 0.0.5
 
 * Upgrade package:web

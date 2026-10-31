@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:web/web.dart' as web;
 
 import 'package:flutter/services.dart';
@@ -20,20 +21,31 @@ class SystemThemeWeb {
   Future<dynamic> handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case 'SystemTheme.accentColor':
-        final e = web.document.body;
-        final currentBackgroundColor = e?.style.backgroundColor;
-        e?.style.backgroundColor = 'highlight';
-        String? backgroundColor =
-            e?.computedStyleMap().get('background-color').toString();
+        final body = web.document.body;
+        if (body == null) return null;
 
-        if (currentBackgroundColor != null) {
-          e?.style.backgroundColor = currentBackgroundColor;
+        try {
+          final style = body.style;
+          final previousColor = style.getPropertyValue('background-color');
+          final previousPriority = style.getPropertyPriority(
+            'background-color',
+          );
+          try {
+            style.setProperty('background-color', 'highlight');
+            final backgroundColor =
+                web.window.getComputedStyle(body).backgroundColor;
+            if (backgroundColor.isEmpty) return null;
+            return extractColorFromCss(backgroundColor);
+          } finally {
+            style.setProperty(
+              'background-color',
+              previousColor,
+              previousPriority,
+            );
+          }
+        } catch (_) {
+          return null;
         }
-
-        if (backgroundColor != null) {
-          return extractColorFromCss(backgroundColor);
-        }
-        return null;
       default:
         throw PlatformException(
           code: 'Unimplemented',
@@ -113,12 +125,7 @@ class SystemThemeWeb {
     }
 
     return {
-      'accent': {
-        'R': r,
-        'G': g,
-        'B': b,
-        'A': a,
-      }
+      'accent': {'R': r, 'G': g, 'B': b, 'A': a},
     };
   }
 }
