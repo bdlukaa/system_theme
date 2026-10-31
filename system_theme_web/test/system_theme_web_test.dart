@@ -22,6 +22,53 @@ void main() {
   final plugin = SystemThemeWeb();
   const call = MethodCall('SystemTheme.accentColor');
 
+  group('parseCssColor', () {
+    final validColors = <String, Map<String, int>>{
+      '#abc': {'R': 170, 'G': 187, 'B': 204, 'A': 255},
+      '#abcd': {'R': 170, 'G': 187, 'B': 204, 'A': 221},
+      '#aabbcc': {'R': 170, 'G': 187, 'B': 204, 'A': 255},
+      '#aabbccdd': {'R': 170, 'G': 187, 'B': 204, 'A': 221},
+      'rgb(10, 20, 30)': {'R': 10, 'G': 20, 'B': 30, 'A': 255},
+      'rgba(10, 20, 30, 0.5)': {'R': 10, 'G': 20, 'B': 30, 'A': 128},
+      'rgb(10 20 30)': {'R': 10, 'G': 20, 'B': 30, 'A': 255},
+      'rgb(10 20 30 / 50%)': {'R': 10, 'G': 20, 'B': 30, 'A': 128},
+      '  rgb( 10  20  30 / 0 )  ': {'R': 10, 'G': 20, 'B': 30, 'A': 0},
+    };
+
+    for (final entry in validColors.entries) {
+      test('parses ${entry.key}', () {
+        final result = parseCssColor(entry.key)['accent'] as Map;
+        expect(result, entry.value);
+        for (final channel in result.values) {
+          expect(channel, inInclusiveRange(0, 255));
+        }
+      });
+    }
+
+    for (final input in [
+      '',
+      'not-a-color',
+      '#12',
+      '#ggg',
+      'rgb(10, 20)',
+      'rgb(10 20 30 40)',
+      'rgb(256 20 30)',
+      'rgb(-1 20 30)',
+      'rgba(10, 20, 30, 2)',
+      'rgb(10 20 30 / 50% / 20%)',
+      'rgb(10, nope, 30)',
+      'rgb(10, 20, 30 / 50%)',
+      'rgb(10 20 30 / invalid)',
+      'rgb(10 20 30 / NaN)',
+      'rgb(Infinity 20 30)',
+      'rgb(10 20 30 / 101%)',
+    ]) {
+      test('rejects malformed color $input', () {
+        expect(() => parseCssColor(input), throwsFormatException);
+      });
+    }
+  });
+
   test('reads a browser color without changing the body style', () async {
     final body = web.document.body!;
     final originalStyle = body.getAttribute('style');
@@ -94,19 +141,22 @@ void main() {
     expect(await result, isNull);
   });
 
-  test('returns null for an unavailable computed color', () async {
-    final original = _getComputedStyle;
-    late Future<dynamic> result;
-    try {
-      _getComputedStyle =
-          ((JSAny? element) => {'backgroundColor': ''}.jsify()).toJS;
-      result = plugin.handleMethodCall(call);
-    } finally {
-      _getComputedStyle = original;
-    }
+  for (final color in ['', 'rgba(10, 20, 30, invalid)']) {
+    test('returns null for an unavailable or malformed computed color: $color',
+        () async {
+      final original = _getComputedStyle;
+      late Future<dynamic> result;
+      try {
+        _getComputedStyle =
+            ((JSAny? element) => {'backgroundColor': color}.jsify()).toJS;
+        result = plugin.handleMethodCall(call);
+      } finally {
+        _getComputedStyle = original;
+      }
 
-    expect(await result, isNull);
-  });
+      expect(await result, isNull);
+    });
+  }
 
   test('returns null when the document has no body', () async {
     final body = web.document.body!;
