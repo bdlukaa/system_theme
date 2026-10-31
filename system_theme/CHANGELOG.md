@@ -4,6 +4,7 @@
 * Fix unsafe asynchronous initialization of `SystemTheme.accentColor`.
 * Make `SystemTheme.fallbackColor configuration predictable regardless of when the singleton is first accessed.
 * Fix `SystemAccentColor.dispose()` so the object can safely be loaded again after disposal.
+* Make `SystemAccentColor.load()` safe when called concurrently.
 
 ## [3.3.0] - [26/05/2026]
 

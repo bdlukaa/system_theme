@@ -241,16 +241,28 @@ class SystemAccentColor {
 
   void _retrieveFromColors(dynamic colors) {
     final systemAccent = _retrieve(colors['accent']);
+    final newAccent = systemAccent ?? defaultAccentColor;
+    final newLight =
+        _retrieve(colors['light']) ?? _adjustLightness(newAccent, 0.1);
+    final newLighter =
+        _retrieve(colors['lighter']) ?? _adjustLightness(newAccent, 0.2);
+    final newLightest =
+        _retrieve(colors['lightest']) ?? _adjustLightness(newAccent, 0.3);
+    final newDark =
+        _retrieve(colors['dark']) ?? _adjustLightness(newAccent, -0.1);
+    final newDarker =
+        _retrieve(colors['darker']) ?? _adjustLightness(newAccent, -0.2);
+    final newDarkest =
+        _retrieve(colors['darkest']) ?? _adjustLightness(newAccent, -0.3);
+
+    accent = newAccent;
+    light = newLight;
+    lighter = newLighter;
+    lightest = newLightest;
+    dark = newDark;
+    darker = newDarker;
+    darkest = newDarkest;
     _hasLoadedSystemColors = systemAccent != null;
-    accent = systemAccent ?? defaultAccentColor;
-
-    light = _retrieve(colors['light']) ?? _adjustLightness(accent, 0.1);
-    lighter = _retrieve(colors['lighter']) ?? _adjustLightness(accent, 0.2);
-    lightest = _retrieve(colors['lightest']) ?? _adjustLightness(accent, 0.3);
-
-    dark = _retrieve(colors['dark']) ?? _adjustLightness(accent, -0.1);
-    darker = _retrieve(colors['darker']) ?? _adjustLightness(accent, -0.2);
-    darkest = _retrieve(colors['darkest']) ?? _adjustLightness(accent, -0.3);
   }
 
   Color _adjustLightness(Color color, double amount) {

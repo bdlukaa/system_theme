@@ -106,6 +106,55 @@ void main() {
       expect(color.accent, const Color(0xFF0000FF));
     });
 
+    test('A later load performs a fresh platform request', () async {
+      final color = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
+      await color.load();
+      await color.load();
+
+      expect(log, hasLength(2));
+    });
+
+    test('A failed load can be retried', () async {
+      var attempts = 0;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (methodCall) async {
+            attempts++;
+            if (attempts == 1) throw PlatformException(code: 'failure');
+            return {'accent': createColorMap(r: 9, g: 8, b: 7)};
+          });
+      final color = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
+
+      final firstLoad = color.load();
+      final secondLoad = color.load();
+      expect(identical(firstLoad, secondLoad), isTrue);
+      await expectLater(
+        Future.wait([firstLoad, secondLoad]),
+        throwsA(isA<PlatformException>()),
+      );
+      await color.load();
+
+      expect(attempts, 2);
+      expect(color.accent, const Color(0xFF090807));
+    });
+
+    test('Failed palette parsing does not partially update colors', () async {
+      final color = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
+      final previousAccent = color.accent;
+      final previousLight = color.light;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (methodCall) async {
+            return {
+              'accent': createColorMap(r: 9, g: 8, b: 7),
+              'light': {'R': 1},
+            };
+          });
+
+      await expectLater(color.load(), throwsA(isA<TypeError>()));
+
+      expect(color.accent, previousAccent);
+      expect(color.light, previousLight);
+    });
+
     test('Explicit platform failures are propagated', () async {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (methodCall) async {
