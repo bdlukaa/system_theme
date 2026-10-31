@@ -4,7 +4,9 @@ import 'package:system_theme/system_theme.dart';
 typedef ThemeWidgetBuilder =
     Widget Function(BuildContext context, SystemAccentColor accent);
 
-/// A widget that rebuilds when the system theme changes.
+/// A widget that rebuilds when [SystemTheme.onChange] emits a new accent
+/// palette. Windows and macOS emit automatic native changes; other platforms
+/// update after an explicit [SystemAccentColor.load] call.
 ///
 /// ```dart
 /// SystemThemeBuilder(builder: (context, color) {

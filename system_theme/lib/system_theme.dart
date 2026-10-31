@@ -34,8 +34,9 @@ extension PlatformHelpers on TargetPlatform {
 /// To configure a fallback color if [accentColor] is not available, set
 /// [fallbackColor] to the desired color
 ///
-/// [onChange] returns a stream of [SystemAccentColor] that notifies when the
-/// system accent color changes.
+/// [onChange] emits explicit [SystemAccentColor.load] changes on all platforms.
+/// Windows and macOS also emit automatic native theme-change notifications;
+/// other platforms do not detect OS changes automatically.
 class SystemTheme {
   /// Platform channel handler for invoking native methods.
   static const MethodChannel _channel = MethodChannel('system_theme');
@@ -56,12 +57,28 @@ class SystemTheme {
       );
   static final Stream<SystemAccentColor> _onChangeStream = _onChangeController
       .stream
-      .distinct();
+      .distinct((previous, next) => previous._hasSamePalette(next));
+  static final Stream<SystemAccentColor> _onChangeStreamWithInitialValue =
+      Stream<SystemAccentColor>.multi((controller) {
+        final subscription = _onChangeStream.listen(
+          controller.add,
+          onError: controller.addError,
+          onDone: controller.close,
+        );
+        controller.onCancel = subscription.cancel;
+        controller.add(accentColor._snapshot());
+      }, isBroadcast: true);
 
   static void _listenForChanges() {
+    if (!defaultTargetPlatform.supportsListeningToAccentColorChanges) return;
+
     _eventSubscription = _eventChannel.receiveBroadcastStream().listen((event) {
       _onChangeController.add(SystemAccentColor._fromMap(event));
     });
+  }
+
+  static void _notifyColorChange(SystemAccentColor color) {
+    _onChangeController.add(color._snapshot());
   }
 
   static Future<void> _stopListeningForChanges() async {
@@ -111,10 +128,13 @@ class SystemTheme {
   static SystemAccentColor get accentColor =>
       _accentColor ??= SystemAccentColor(fallbackColor);
 
-  /// A stream of [SystemAccentColor] that notifies when the system accent color
-  /// changes.
+  /// A stream of system accent palettes.
   ///
-  /// Currently only available on Windows.
+  /// On platforms without native listeners, each subscription first receives
+  /// the current palette, followed by changes from successful explicit
+  /// [SystemAccentColor.load] calls. Windows and macOS report native theme
+  /// changes automatically and also emit changes from explicit loads. Other
+  /// platforms do not detect OS changes automatically.
   ///
   /// Basica usage:
   ///
@@ -124,11 +144,11 @@ class SystemTheme {
   /// });
   /// ```
   static Stream<SystemAccentColor> get onChange {
-    if (!defaultTargetPlatform.supportsListeningToAccentColorChanges) {
-      return Stream.value(accentColor);
+    if (defaultTargetPlatform.supportsListeningToAccentColorChanges) {
+      return _onChangeStream;
     }
 
-    return _onChangeStream;
+    return _onChangeStreamWithInitialValue;
   }
 }
 
@@ -181,6 +201,29 @@ class SystemAccentColor {
     darkest = _defaultAccentColor;
   }
 
+  SystemAccentColor._copy(SystemAccentColor source)
+    : _defaultAccentColor = source.defaultAccentColor,
+      _hasLoadedSystemColors = source._hasLoadedSystemColors {
+    accent = source.accent;
+    light = source.light;
+    lighter = source.lighter;
+    lightest = source.lightest;
+    dark = source.dark;
+    darker = source.darker;
+    darkest = source.darkest;
+  }
+
+  SystemAccentColor _snapshot() => SystemAccentColor._copy(this);
+
+  bool _hasSamePalette(SystemAccentColor other) =>
+      accent == other.accent &&
+      light == other.light &&
+      lighter == other.lighter &&
+      lightest == other.lightest &&
+      dark == other.dark &&
+      darker == other.darker &&
+      darkest == other.darkest;
+
   SystemAccentColor._fromMap(dynamic colors)
     : _defaultAccentColor = SystemTheme.fallbackColor {
     accent = _defaultAccentColor;
@@ -219,6 +262,7 @@ class SystemAccentColor {
 
   Future<void> _load() async {
     WidgetsFlutterBinding.ensureInitialized();
+    final previousPalette = _snapshot();
 
     try {
       final colors = await SystemTheme._channel.invokeMethod<dynamic>(
@@ -226,6 +270,9 @@ class SystemAccentColor {
       );
       if (colors == null) return;
       _retrieveFromColors(colors);
+      if (!_hasSamePalette(previousPalette)) {
+        SystemTheme._notifyColorChange(this);
+      }
     } on MissingPluginException {
       debugPrint('system_theme does not implement the current platform');
       return;
@@ -234,6 +281,7 @@ class SystemAccentColor {
     if (!defaultTargetPlatform.supportsListeningToAccentColorChanges) return;
 
     _subscription ??= SystemTheme.onChange.listen((color) {
+      _hasLoadedSystemColors = color._hasLoadedSystemColors;
       accent = color.accent;
       light = color.light;
       lighter = color.lighter;

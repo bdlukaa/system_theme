@@ -312,7 +312,101 @@ void main() {
       expect(color.accent, SystemTheme.kDefaultFallbackColor);
     });
 
+    testWidgets(
+      'explicit reload updates both builders without duplicate updates',
+      (tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.android;
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(channel, (methodCall) async {
+              return {'accent': createColorMap(r: 12, g: 34, b: 56)};
+            });
+        final firstValues = <Color>[];
+        final secondValues = <Color>[];
+
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: Column(
+              children: [
+                SystemThemeBuilder(
+                  builder: (context, color) {
+                    firstValues.add(color.accent);
+                    return const SizedBox();
+                  },
+                ),
+                SystemThemeBuilder(
+                  builder: (context, color) {
+                    secondValues.add(color.accent);
+                    return const SizedBox();
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+        await tester.pump();
+        final initialFirstBuilds = firstValues.length;
+        final initialSecondBuilds = secondValues.length;
+
+        await SystemTheme.accentColor.load();
+        await tester.pumpAndSettle();
+        expect(firstValues.last, const Color(0xFF0C2238));
+        expect(secondValues.last, const Color(0xFF0C2238));
+        final updatedFirstBuilds = firstValues.length;
+        final updatedSecondBuilds = secondValues.length;
+        expect(updatedFirstBuilds, greaterThan(initialFirstBuilds));
+        expect(updatedSecondBuilds, greaterThan(initialSecondBuilds));
+
+        await SystemTheme.accentColor.load();
+        await tester.pumpAndSettle();
+        expect(firstValues, hasLength(updatedFirstBuilds));
+        expect(secondValues, hasLength(updatedSecondBuilds));
+
+        await tester.pumpWidget(const SizedBox());
+        debugDefaultTargetPlatformOverride = null;
+      },
+    );
+
     for (final platform in [TargetPlatform.windows, TargetPlatform.macOS]) {
+      testWidgets('native events and reloads are deduplicated on $platform', (
+        tester,
+      ) async {
+        debugDefaultTargetPlatformOverride = platform;
+        late MockStreamHandlerEventSink eventSink;
+        var cancelCount = 0;
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockStreamHandler(
+              eventChannel,
+              MockStreamHandler.inline(
+                onListen: (arguments, sink) {
+                  eventSink = sink;
+                },
+                onCancel: (arguments) {
+                  cancelCount++;
+                },
+              ),
+            );
+        final events = <SystemAccentColor>[];
+        final subscription = SystemTheme.onChange.listen(events.add);
+        await tester.pump();
+
+        eventSink.success({'accent': createColorMap(b: 255)});
+        await tester.pump();
+        expect(events, hasLength(1));
+
+        await SystemTheme.accentColor.load();
+        await tester.pump();
+        expect(events, hasLength(1));
+
+        subscription.cancel();
+        SystemTheme.accentColor.dispose();
+        await tester.pump();
+        expect(cancelCount, 1);
+        debugDefaultTargetPlatformOverride = null;
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockStreamHandler(eventChannel, null);
+      });
+
       testWidgets('reloads a disposed color on $platform', (tester) async {
         debugDefaultTargetPlatformOverride = platform;
         addTearDown(() => debugDefaultTargetPlatformOverride = null);

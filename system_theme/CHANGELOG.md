@@ -6,6 +6,7 @@
 * Fix `SystemAccentColor.dispose()` so the object can safely be loaded again after disposal.
 * Make `SystemAccentColor.load()` safe when called concurrently.
 * Improve how `SystemAccentColor` handles failures when loading or refreshing system colors.
+* Make `SystemTheme.onChange` and `SystemThemeBuilder` behavior consistent and clearly defined across supported platforms.
 
 ## [3.3.0] - [26/05/2026]
 
