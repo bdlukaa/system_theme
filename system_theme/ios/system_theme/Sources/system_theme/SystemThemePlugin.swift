@@ -1,5 +1,6 @@
 import Flutter
 import SwiftUI
+import UIKit
 
 public class SystemThemePlugin: NSObject, FlutterPlugin {
     public static func register(with registrar: FlutterPluginRegistrar) {
@@ -12,9 +13,11 @@ public class SystemThemePlugin: NSObject, FlutterPlugin {
         switch call.method {
         case "SystemTheme.accentColor":
             if #available(iOS 14.0, *) {
-                var colors:[String:[String:Int]?] = [:]
-                colors["accent"] = Color.accentColor.toHex()
-                result(colors)
+                if let accent = Color.accentColor.toHex() {
+                    result(["accent": accent])
+                } else {
+                    result(nil)
+                }
             } else {
                 result(nil)
             }
@@ -26,41 +29,24 @@ public class SystemThemePlugin: NSObject, FlutterPlugin {
 
 @available(iOS 14.0, *)
 extension Color {
-    // Function to convert SwiftUI Color to a Hex String
-    func toHex() -> Dictionary<String,Int>? {
-        // Extract the RGBA components from the Color
-        let components = self.cgColorComponents
-        // Check if components contain at least RGB
-        guard components.count >= 3 else { return nil }
-        
-        let r = components[0]
-        let g = components[1]
-        let b = components[2]
-        let a = components.count >= 4 ? components[3] : 1.0
-        
-        return [
-            "R":lroundf(Float(r * 255)),
-            "G":lroundf(Float(g * 255)),
-            "B":lroundf(Float(b * 255)),
-            "A":lroundf(Float(a * 255))
-        ]
-    }
-    
-    // Helper function to extract RGBA components
-    private var cgColorComponents: [CGFloat] {
-        // Convert SwiftUI Color to UIColor
-        let uiColor = UIColor(self)
-        
-        // Get CGColor and its components
-        guard let components = uiColor.cgColor.components else {
-            return []
+    func toHex() -> [String: Int]? {
+        let color = UIColor(self).resolvedColor(with: UITraitCollection.current)
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+
+        if !color.getRed(&red, green: &green, blue: &blue, alpha: &alpha) {
+            var white: CGFloat = 0
+            guard color.getWhite(&white, alpha: &alpha) else { return nil }
+            red = white
+            green = white
+            blue = white
         }
 
-        // Handle the case of grayscale color (1 component)
-        if components.count == 2 {
-            return [components[0], components[0], components[0], components[1]]
-        }
-        
-        return components
+        let components = [red, green, blue, alpha]
+        guard components.allSatisfy({ $0.isFinite }) else { return nil }
+        let channels = components.map { Int((min(max($0, 0), 1) * 255).rounded()) }
+        return ["R": channels[0], "G": channels[1], "B": channels[2], "A": channels[3]]
     }
 }

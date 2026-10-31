@@ -34,7 +34,7 @@ import 'package:system_theme/system_theme.dart';
 
 ### Get system accent color
 
-Use the getter `SystemTheme.accentColor.accent` to get the system accent color.
+Use the getter `SystemTheme.accentColor.accent` to get the accent color.
 
 ```dart
 final accentColor = SystemTheme.accentColor.accent;
@@ -95,6 +95,16 @@ SystemThemeBuilder(
   },
 );
 ```
+
+### Notes
+
+On iOS 14 and later, this is the **application's** SwiftUI accent color (for
+example, the accent configured in the app's asset catalog), or the platform's
+app-level default when none is configured. Unlike Windows and macOS, iOS does
+not expose an equivalent global user-selected system accent color. If the app
+accent is unavailable or cannot be converted, the existing fallback or last
+loaded palette is retained. iOS does not automatically report accent changes;
+call `load()` to refresh it.
 
 ## Contribution
 
