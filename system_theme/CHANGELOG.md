@@ -7,6 +7,7 @@
 * Make `SystemAccentColor.load()` safe when called concurrently.
 * Improve how `SystemAccentColor` handles failures when loading or refreshing system colors.
 * Make `SystemTheme.onChange` and `SystemThemeBuilder` behavior consistent and clearly defined across supported platforms.
+* Correct Material You and wallpaper-based accent colors.
 
 ## [3.3.0] - [26/05/2026]
 
