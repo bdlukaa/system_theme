@@ -58,6 +58,41 @@ void main() {
   });
 
   group('SystemTheme', () {
+    test(
+      'Changing fallback updates singleton shades before native colors load',
+      () {
+        const fallback = Color(0xFF123456);
+        SystemTheme.fallbackColor = fallback;
+
+        final color = SystemTheme.accentColor;
+        expect(color.defaultAccentColor, fallback);
+        expect([
+          color.accent,
+          color.light,
+          color.lighter,
+          color.lightest,
+          color.dark,
+          color.darker,
+          color.darkest,
+        ], everyElement(fallback));
+
+        SystemTheme.fallbackColor = SystemTheme.kDefaultFallbackColor;
+      },
+    );
+
+    test('Fallback changes preserve loaded native colors', () async {
+      final color = SystemTheme.accentColor;
+      await color.load();
+      final nativeAccent = color.accent;
+      const newFallback = Color(0xFF123456);
+
+      SystemTheme.fallbackColor = newFallback;
+
+      expect(color.accent, nativeAccent);
+      expect(color.defaultAccentColor, newFallback);
+      SystemTheme.fallbackColor = SystemTheme.kDefaultFallbackColor;
+    });
+
     test('Reading accentColor does not perform platform I/O', () {
       expect(SystemTheme.accentColor.accent, SystemTheme.fallbackColor);
       expect(log, isEmpty);

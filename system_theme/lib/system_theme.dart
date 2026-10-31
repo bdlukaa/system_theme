@@ -73,10 +73,19 @@ class SystemTheme {
   /// Default system accent color.
   static const kDefaultFallbackColor = Color(0xff00b7c3);
 
-  /// The fallback color
+  /// The color used for accent shades when system colors are unavailable.
   ///
-  /// Returns [kDefaultFallbackColor] if not set
-  static Color fallbackColor = kDefaultFallbackColor;
+  /// Changing this value updates [accentColor] immediately if it has not yet
+  /// loaded native colors. Successfully loaded native colors are preserved;
+  /// the new fallback is used if a later load cannot provide system colors.
+  static Color _fallbackColor = kDefaultFallbackColor;
+  static Color get fallbackColor => _fallbackColor;
+  static set fallbackColor(Color color) {
+    _fallbackColor = color;
+    _accentColor?._setFallbackColor(color);
+  }
+
+  static SystemAccentColor? _accentColor;
 
   /// Whether to automatically adjust lightness if the color if the platform
   /// doesn't support it natively.
@@ -99,7 +108,8 @@ class SystemTheme {
   ///   - Linux
   ///
   /// It returns [kDefaultFallbackColor] for unsupported platforms
-  static final SystemAccentColor accentColor = SystemAccentColor(fallbackColor);
+  static SystemAccentColor get accentColor =>
+      _accentColor ??= SystemAccentColor(fallbackColor);
 
   /// A stream of [SystemAccentColor] that notifies when the system accent color
   /// changes.
@@ -133,7 +143,9 @@ class SystemAccentColor {
   Future<void>? _loadFuture;
 
   /// The accent color used when the others are not available.
-  final Color defaultAccentColor;
+  Color _defaultAccentColor;
+  Color get defaultAccentColor => _defaultAccentColor;
+  bool _hasLoadedSystemColors = false;
 
   /// Base accent color.
   late Color accent;
@@ -156,19 +168,39 @@ class SystemAccentColor {
   /// Darkest shade.
   late Color darkest;
 
-  SystemAccentColor(this.defaultAccentColor) {
-    accent = defaultAccentColor;
-    light = defaultAccentColor;
-    lighter = defaultAccentColor;
-    lightest = defaultAccentColor;
-    dark = defaultAccentColor;
-    darker = defaultAccentColor;
-    darkest = defaultAccentColor;
+  SystemAccentColor(this._defaultAccentColor) {
+    accent = _defaultAccentColor;
+    light = _defaultAccentColor;
+    lighter = _defaultAccentColor;
+    lightest = _defaultAccentColor;
+    dark = _defaultAccentColor;
+    darker = _defaultAccentColor;
+    darkest = _defaultAccentColor;
   }
 
   SystemAccentColor._fromMap(dynamic colors)
-    : defaultAccentColor = SystemTheme.fallbackColor {
+    : _defaultAccentColor = SystemTheme.fallbackColor {
+    accent = _defaultAccentColor;
+    light = _defaultAccentColor;
+    lighter = _defaultAccentColor;
+    lightest = _defaultAccentColor;
+    dark = _defaultAccentColor;
+    darker = _defaultAccentColor;
+    darkest = _defaultAccentColor;
     _retrieveFromColors(colors);
+  }
+
+  void _setFallbackColor(Color color) {
+    _defaultAccentColor = color;
+    if (_hasLoadedSystemColors) return;
+
+    accent = color;
+    light = color;
+    lighter = color;
+    lightest = color;
+    dark = color;
+    darker = color;
+    darkest = color;
   }
 
   /// Fetches the system accent colors.
@@ -208,7 +240,9 @@ class SystemAccentColor {
   }
 
   void _retrieveFromColors(dynamic colors) {
-    accent = _retrieve(colors['accent']) ?? defaultAccentColor;
+    final systemAccent = _retrieve(colors['accent']);
+    _hasLoadedSystemColors = systemAccent != null;
+    accent = systemAccent ?? defaultAccentColor;
 
     light = _retrieve(colors['light']) ?? _adjustLightness(accent, 0.1);
     lighter = _retrieve(colors['lighter']) ?? _adjustLightness(accent, 0.2);
