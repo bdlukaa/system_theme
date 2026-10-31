@@ -1,6 +1,7 @@
 ## [next]
 
 * Retrieve browser CSS colors without depending on `computedStyleMap()`.
+* Stop treating CSS Highlight as the exact OS accent color.
 
 ## 0.0.5
 

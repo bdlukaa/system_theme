@@ -6,6 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 /// A web implementation of the SystemTheme plugin.
+///
+/// Uses the browser's CSS `AccentColor`, which may be a browser default rather
+/// than the OS accent color. When unavailable, the plugin returns no color so
+/// the calling package can retain its configured fallback or last palette.
 class SystemThemeWeb {
   static void registerWith(Registrar registrar) {
     final MethodChannel channel = MethodChannel(
@@ -25,23 +29,27 @@ class SystemThemeWeb {
         if (body == null) return null;
 
         try {
+          if (!web.CSS.supports('background-color', 'AccentColor')) return null;
+
           final style = body.style;
           final previousColor = style.getPropertyValue('background-color');
-          final previousPriority = style.getPropertyPriority(
-            'background-color',
-          );
+          final previousPriority =
+              style.getPropertyPriority('background-color');
+          final previousAccent = style.getPropertyValue('accent-color');
+          final previousAccentPriority =
+              style.getPropertyPriority('accent-color');
           try {
-            style.setProperty('background-color', 'highlight');
+            style.setProperty('accent-color', 'auto', 'important');
+            style.setProperty('background-color', 'AccentColor', 'important');
             final backgroundColor =
                 web.window.getComputedStyle(body).backgroundColor;
             if (backgroundColor.isEmpty) return null;
             return extractColorFromCss(backgroundColor);
           } finally {
             style.setProperty(
-              'background-color',
-              previousColor,
-              previousPriority,
-            );
+                'background-color', previousColor, previousPriority);
+            style.setProperty(
+                'accent-color', previousAccent, previousAccentPriority);
           }
         } catch (_) {
           return null;
