@@ -136,8 +136,11 @@ class SystemTheme {
 /// Colors are cached by default, call [SystemAccentColor.load] to update the
 /// colors.
 ///
-/// It returns [SystemAccentColor.defaultAccentColor] if
-/// [SystemAccentColor.load] fails
+/// Before the first successful load, the configured fallback palette is used.
+/// A null response or unsupported platform leaves that palette unchanged, and
+/// a failed refresh preserves the last successfully loaded palette. Errors from
+/// unexpected platform failures or malformed responses are propagated by
+/// [SystemAccentColor.load].
 class SystemAccentColor {
   StreamSubscription<SystemAccentColor>? _subscription;
   Future<void>? _loadFuture;
@@ -205,9 +208,11 @@ class SystemAccentColor {
 
   /// Fetches the system accent colors.
   ///
-  /// Concurrent calls share the same operation. Errors from this explicit
-  /// operation are propagated to its callers, except [MissingPluginException],
-  /// which leaves this color set to its fallback.
+  /// Concurrent calls share the same operation. A null response or an
+  /// unsupported platform leaves the current palette unchanged. Other
+  /// platform failures and malformed responses are propagated to callers;
+  /// they leave the current palette unchanged. Before the first successful
+  /// load, the current palette is the configured fallback.
   Future<void> load() {
     return _loadFuture ??= _load().whenComplete(() => _loadFuture = null);
   }
@@ -216,7 +221,7 @@ class SystemAccentColor {
     WidgetsFlutterBinding.ensureInitialized();
 
     try {
-      final colors = await SystemTheme._channel.invokeMethod(
+      final colors = await SystemTheme._channel.invokeMethod<dynamic>(
         SystemTheme.getSystemAccentColorMethodName,
       );
       if (colors == null) return;
@@ -224,9 +229,9 @@ class SystemAccentColor {
     } on MissingPluginException {
       debugPrint('system_theme does not implement the current platform');
       return;
-    } catch (_) {
-      rethrow;
     }
+
+    if (!defaultTargetPlatform.supportsListeningToAccentColorChanges) return;
 
     _subscription ??= SystemTheme.onChange.listen((color) {
       accent = color.accent;
@@ -240,8 +245,17 @@ class SystemAccentColor {
   }
 
   void _retrieveFromColors(dynamic colors) {
+    if (colors is! Map || !colors.containsKey('accent')) {
+      throw const FormatException(
+        'System accent response must include accent.',
+      );
+    }
+
     final systemAccent = _retrieve(colors['accent']);
-    final newAccent = systemAccent ?? defaultAccentColor;
+    if (systemAccent == null) {
+      throw const FormatException('System accent color must not be null.');
+    }
+    final newAccent = systemAccent;
     final newLight =
         _retrieve(colors['light']) ?? _adjustLightness(newAccent, 0.1);
     final newLighter =
@@ -262,7 +276,7 @@ class SystemAccentColor {
     dark = newDark;
     darker = newDarker;
     darkest = newDarkest;
-    _hasLoadedSystemColors = systemAccent != null;
+    _hasLoadedSystemColors = true;
   }
 
   Color _adjustLightness(Color color, double amount) {
@@ -273,9 +287,25 @@ class SystemAccentColor {
   }
 
   Color? _retrieve(dynamic map) {
-    assert(map == null || map is Map);
     if (map == null) return null;
-    return Color.fromARGB(map['A'] ?? 255, map['R'], map['G'], map['B']);
+    if (map is! Map) {
+      throw const FormatException('System color must be a channel map.');
+    }
+
+    int component(String channel, {int? fallback}) {
+      final value = map[channel] ?? fallback;
+      if (value is! int || value < 0 || value > 255) {
+        throw FormatException('Invalid system color channel: $channel.');
+      }
+      return value;
+    }
+
+    return Color.fromARGB(
+      component('A', fallback: 255),
+      component('R'),
+      component('G'),
+      component('B'),
+    );
   }
 
   /// Releases any used resources.

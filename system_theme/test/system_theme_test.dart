@@ -106,6 +106,138 @@ void main() {
       expect(color.accent, const Color(0xFF0000FF));
     });
 
+    test('Initial null response keeps the fallback palette', () async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (methodCall) async => null);
+      final color = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
+
+      await color.load();
+
+      expect([
+        color.accent,
+        color.light,
+        color.lighter,
+        color.lightest,
+        color.dark,
+        color.darker,
+        color.darkest,
+      ], everyElement(SystemTheme.kDefaultFallbackColor));
+    });
+
+    test('Failed refresh preserves the last successful palette', () async {
+      var attempts = 0;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (methodCall) async {
+            attempts++;
+            if (attempts == 1) {
+              return {'accent': createColorMap(r: 10, g: 20, b: 30)};
+            }
+            throw PlatformException(code: 'refresh-failed');
+          });
+      final color = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
+      await color.load();
+      final palette = [
+        color.accent,
+        color.light,
+        color.lighter,
+        color.lightest,
+        color.dark,
+        color.darker,
+        color.darkest,
+      ];
+
+      await expectLater(color.load(), throwsA(isA<PlatformException>()));
+
+      expect([
+        color.accent,
+        color.light,
+        color.lighter,
+        color.lightest,
+        color.dark,
+        color.darker,
+        color.darkest,
+      ], palette);
+    });
+
+    test(
+      'Malformed or incomplete responses preserve the current palette',
+      () async {
+        final color = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
+        final previousAccent = color.accent;
+        final previousLight = color.light;
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(channel, (methodCall) async {
+              return {
+                'accent': {'R': 12, 'G': 34},
+              };
+            });
+
+        await expectLater(color.load(), throwsA(isA<FormatException>()));
+
+        expect(color.accent, previousAccent);
+        expect(color.light, previousLight);
+      },
+    );
+
+    test('Successful refresh replaces the complete palette', () async {
+      var attempts = 0;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (methodCall) async {
+            attempts++;
+            final value = attempts == 1 ? 10 : 20;
+            return {
+              'accent': createColorMap(r: value, g: value, b: value),
+              'light': createColorMap(r: value + 1, g: value + 1, b: value + 1),
+              'lighter': createColorMap(
+                r: value + 2,
+                g: value + 2,
+                b: value + 2,
+              ),
+              'lightest': createColorMap(
+                r: value + 3,
+                g: value + 3,
+                b: value + 3,
+              ),
+              'dark': createColorMap(r: value + 4, g: value + 4, b: value + 4),
+              'darker': createColorMap(
+                r: value + 5,
+                g: value + 5,
+                b: value + 5,
+              ),
+              'darkest': createColorMap(
+                r: value + 6,
+                g: value + 6,
+                b: value + 6,
+              ),
+            };
+          });
+      final color = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
+
+      await color.load();
+      await color.load();
+
+      expect(
+        [
+          color.accent,
+          color.light,
+          color.lighter,
+          color.lightest,
+          color.dark,
+          color.darker,
+          color.darkest,
+        ],
+        [
+          const Color(0xFF141414),
+          const Color(0xFF151515),
+          const Color(0xFF161616),
+          const Color(0xFF171717),
+          const Color(0xFF181818),
+          const Color(0xFF191919),
+          const Color(0xFF1A1A1A),
+        ],
+      );
+    });
+
     test('A later load performs a fresh platform request', () async {
       final color = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
       await color.load();
@@ -149,7 +281,7 @@ void main() {
             };
           });
 
-      await expectLater(color.load(), throwsA(isA<TypeError>()));
+      await expectLater(color.load(), throwsA(isA<FormatException>()));
 
       expect(color.accent, previousAccent);
       expect(color.light, previousLight);
