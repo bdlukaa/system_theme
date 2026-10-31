@@ -1,12 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/widgets.dart';
 import 'package:system_theme/system_theme.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   const MethodChannel channel = MethodChannel('system_theme');
+  const EventChannel eventChannel = EventChannel(
+    'system_theme_events/switch_callback',
+  );
 
   final List<MethodCall> log = <MethodCall>[];
 
@@ -54,6 +58,108 @@ void main() {
   });
 
   group('SystemTheme', () {
+    for (final platform in [TargetPlatform.windows, TargetPlatform.macOS]) {
+      testWidgets('shares change events on $platform', (tester) async {
+        debugDefaultTargetPlatformOverride = platform;
+        late MockStreamHandlerEventSink eventSink;
+        var listenCount = 0;
+        var cancelCount = 0;
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockStreamHandler(
+              eventChannel,
+              MockStreamHandler.inline(
+                onListen: (arguments, sink) {
+                  listenCount++;
+                  eventSink = sink;
+                },
+                onCancel: (arguments) {
+                  cancelCount++;
+                },
+              ),
+            );
+
+        final receivedByFirst = <SystemAccentColor>[];
+        final receivedBySecond = <SystemAccentColor>[];
+        final first = SystemTheme.onChange.listen(receivedByFirst.add);
+        final second = SystemTheme.onChange.listen(receivedBySecond.add);
+        await tester.pump();
+        expect(listenCount, 1);
+
+        final color = createColorMap(r: 1, g: 2, b: 3);
+        eventSink.success({'accent': color});
+        await tester.pump();
+        expect(receivedByFirst, hasLength(1));
+        expect(receivedBySecond, receivedByFirst);
+
+        await first.cancel();
+        expect(cancelCount, 0);
+        eventSink.success({'accent': createColorMap(r: 4, g: 5, b: 6)});
+        await tester.pump();
+        expect(receivedByFirst, hasLength(1));
+        expect(receivedBySecond, hasLength(2));
+
+        await second.cancel();
+        await tester.pump();
+        expect(cancelCount, 1);
+
+        final third = SystemTheme.onChange.listen(receivedByFirst.add);
+        await tester.pump();
+        expect(listenCount, 2);
+        await third.cancel();
+        await tester.pump();
+
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockStreamHandler(eventChannel, null);
+      });
+
+      testWidgets('multiple builders rebuild on $platform', (tester) async {
+        debugDefaultTargetPlatformOverride = platform;
+        late MockStreamHandlerEventSink eventSink;
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockStreamHandler(
+              eventChannel,
+              MockStreamHandler.inline(
+                onListen: (arguments, sink) => eventSink = sink,
+                onCancel: (arguments) {},
+              ),
+            );
+        var firstBuilds = 0;
+        var secondBuilds = 0;
+
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: Column(
+              children: [
+                SystemThemeBuilder(
+                  builder: (context, color) {
+                    firstBuilds++;
+                    return const SizedBox();
+                  },
+                ),
+                SystemThemeBuilder(
+                  builder: (context, color) {
+                    secondBuilds++;
+                    return const SizedBox();
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+        await tester.pump();
+        final initialFirstBuilds = firstBuilds;
+        final initialSecondBuilds = secondBuilds;
+        eventSink.success({'accent': createColorMap(r: 1, g: 2, b: 3)});
+        await tester.pump();
+        expect(firstBuilds, greaterThan(initialFirstBuilds));
+        expect(secondBuilds, greaterThan(initialSecondBuilds));
+
+        await tester.pumpWidget(const SizedBox());
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockStreamHandler(eventChannel, null);
+      });
+    }
     test('Check platform support for accent color', () {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
       expect(defaultTargetPlatform.supportsAccentColor, isTrue);

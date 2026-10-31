@@ -1,3 +1,7 @@
+## [next]
+
+* Fix `SystemTheme.onChange` so multiple simultaneous listeners do not interfere with each other.
+
 ## [3.3.0] - [26/05/2026]
 
 * android: [Migrate to Built-in Kotlin](https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin) ([#49](https://github.com/bdlukaa/system_theme/pull/49))

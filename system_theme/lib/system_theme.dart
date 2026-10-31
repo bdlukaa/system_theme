@@ -47,6 +47,29 @@ class SystemTheme {
     'system_theme_events/switch_callback',
   );
 
+  static StreamSubscription<dynamic>? _eventSubscription;
+
+  static final StreamController<SystemAccentColor> _onChangeController =
+      StreamController<SystemAccentColor>.broadcast(
+        onListen: _listenForChanges,
+        onCancel: _stopListeningForChanges,
+      );
+  static final Stream<SystemAccentColor> _onChangeStream = _onChangeController
+      .stream
+      .distinct();
+
+  static void _listenForChanges() {
+    _eventSubscription = _eventChannel.receiveBroadcastStream().listen((event) {
+      _onChangeController.add(SystemAccentColor._fromMap(event));
+    });
+  }
+
+  static Future<void> _stopListeningForChanges() async {
+    final subscription = _eventSubscription;
+    _eventSubscription = null;
+    await subscription?.cancel();
+  }
+
   /// Default system accent color.
   static const kDefaultFallbackColor = Color(0xff00b7c3);
 
@@ -92,9 +115,7 @@ class SystemTheme {
       return Stream.value(accentColor);
     }
 
-    return _eventChannel.receiveBroadcastStream().map((event) {
-      return SystemAccentColor._fromMap(event);
-    }).distinct();
+    return _onChangeStream;
   }
 }
 
