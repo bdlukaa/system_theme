@@ -22,18 +22,21 @@ void main() {
   final plugin = SystemThemeWeb();
   const call = MethodCall('SystemTheme.accentColor');
 
-  test('reads a browser color and restores the inline background', () async {
-    final style = web.document.body!.style;
-    final previous = style.getPropertyValue('background-color');
-    final priority = style.getPropertyPriority('background-color');
-    final previousAccent = style.getPropertyValue('accent-color');
-    final accentPriority = style.getPropertyPriority('accent-color');
+  test('reads a browser color without changing the body style', () async {
+    final body = web.document.body!;
+    final originalStyle = body.getAttribute('style');
     addTearDown(() {
-      style.setProperty('background-color', previous, priority);
-      style.setProperty('accent-color', previousAccent, accentPriority);
+      if (originalStyle == null) {
+        body.removeAttribute('style');
+      } else {
+        body.setAttribute('style', originalStyle);
+      }
     });
-    style.setProperty('background-color', 'rgb(1, 2, 3)', 'important');
-    style.setProperty('accent-color', 'rgb(4, 5, 6)', 'important');
+    body.setAttribute(
+      'style',
+      'background: var(--page-background); accent-color: rgb(4, 5, 6)',
+    );
+    final expectedStyle = body.getAttribute('style');
 
     final result = await plugin.handleMethodCall(call);
     if (!web.CSS.supports('background-color', 'AccentColor')) {
@@ -47,12 +50,7 @@ void main() {
     for (final channel in ['R', 'G', 'B', 'A']) {
       expect(accent[channel], inInclusiveRange(0, 255));
     }
-    expect(style.getPropertyValue('background-color'), 'rgb(1, 2, 3)');
-    expect(style.getPropertyPriority('background-color'), 'important');
-    if (web.CSS.supports('accent-color', 'auto')) {
-      expect(style.getPropertyValue('accent-color'), 'rgb(4, 5, 6)');
-      expect(style.getPropertyPriority('accent-color'), 'important');
-    }
+    expect(body.getAttribute('style'), expectedStyle);
   });
 
   test('requests AccentColor using the automatic accent', () async {
@@ -63,9 +61,9 @@ void main() {
     late Future<dynamic> result;
     try {
       _getComputedStyle = ((JSAny? element) {
-        final style = web.document.body!.style;
-        requestedColor = style.getPropertyValue('background-color');
-        requestedAccent = style.getPropertyValue('accent-color');
+        final probe = element! as web.HTMLElement;
+        requestedColor = probe.style.getPropertyValue('background-color');
+        requestedAccent = probe.style.getPropertyValue('accent-color');
         return {'backgroundColor': 'rgb(8, 16, 32)'}.jsify();
       }).toJS;
       result = plugin.handleMethodCall(call);

@@ -2,6 +2,7 @@
 
 * Retrieve browser CSS colors without depending on `computedStyleMap()`.
 * Stop treating CSS Highlight as the exact OS accent color.
+* Prevent web CSS mutations from leaking.
 
 ## 0.0.5
 

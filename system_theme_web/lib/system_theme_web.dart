@@ -31,25 +31,18 @@ class SystemThemeWeb {
         try {
           if (!web.CSS.supports('background-color', 'AccentColor')) return null;
 
-          final style = body.style;
-          final previousColor = style.getPropertyValue('background-color');
-          final previousPriority =
-              style.getPropertyPriority('background-color');
-          final previousAccent = style.getPropertyValue('accent-color');
-          final previousAccentPriority =
-              style.getPropertyPriority('accent-color');
+          final probe = web.document.createElement('div') as web.HTMLElement;
+          probe.style.setProperty('display', 'none');
+          probe.style.setProperty('accent-color', 'auto');
+          probe.style.setProperty('background-color', 'AccentColor');
+          body.append(probe);
           try {
-            style.setProperty('accent-color', 'auto', 'important');
-            style.setProperty('background-color', 'AccentColor', 'important');
             final backgroundColor =
-                web.window.getComputedStyle(body).backgroundColor;
+                web.window.getComputedStyle(probe).backgroundColor;
             if (backgroundColor.isEmpty) return null;
             return extractColorFromCss(backgroundColor);
           } finally {
-            style.setProperty(
-                'background-color', previousColor, previousPriority);
-            style.setProperty(
-                'accent-color', previousAccent, previousAccentPriority);
+            probe.remove();
           }
         } catch (_) {
           return null;
