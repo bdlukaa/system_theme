@@ -2,6 +2,8 @@
 
 * Fix `SystemTheme.onChange` so multiple simultaneous listeners do not interfere with each other.
 * Fix unsafe asynchronous initialization of `SystemTheme.accentColor`.
+* Make `SystemTheme.fallbackColor configuration predictable regardless of when the singleton is first accessed.
+* Fix `SystemAccentColor.dispose()` so the object can safely be loaded again after disposal.
 
 ## [3.3.0] - [26/05/2026]
 

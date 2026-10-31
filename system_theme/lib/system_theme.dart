@@ -266,9 +266,13 @@ class SystemAccentColor {
     return Color.fromARGB(map['A'] ?? 255, map['R'], map['G'], map['B']);
   }
 
-  /// Releases any used resources
+  /// Releases any used resources.
+  ///
+  /// The object can be loaded again after disposal.
   void dispose() {
-    _subscription?.cancel();
+    final subscription = _subscription;
+    _subscription = null;
+    subscription?.cancel();
   }
 
   @override

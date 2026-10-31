@@ -132,6 +132,56 @@ void main() {
     });
 
     for (final platform in [TargetPlatform.windows, TargetPlatform.macOS]) {
+      testWidgets('reloads a disposed color on $platform', (tester) async {
+        debugDefaultTargetPlatformOverride = platform;
+        addTearDown(() => debugDefaultTargetPlatformOverride = null);
+        late MockStreamHandlerEventSink eventSink;
+        var listenCount = 0;
+        var cancelCount = 0;
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockStreamHandler(
+              eventChannel,
+              MockStreamHandler.inline(
+                onListen: (arguments, sink) {
+                  listenCount++;
+                  eventSink = sink;
+                },
+                onCancel: (arguments) {
+                  cancelCount++;
+                },
+              ),
+            );
+        final color = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
+
+        await color.load();
+        await tester.pump();
+        expect(listenCount, 1);
+        eventSink.success({'accent': createColorMap(r: 1, g: 2, b: 3)});
+        await tester.pump();
+        final beforeDispose = color.accent;
+
+        color.dispose();
+        color.dispose();
+        eventSink.success({'accent': createColorMap(r: 4, g: 5, b: 6)});
+        await tester.pump();
+        expect(color.accent, beforeDispose);
+        expect(cancelCount, 1);
+
+        await color.load();
+        await tester.pump();
+        expect(listenCount, 2);
+        eventSink.success({'accent': createColorMap(r: 7, g: 8, b: 9)});
+        await tester.pump();
+        expect(color.accent, const Color(0xFF070809));
+
+        color.dispose();
+        await tester.pump();
+        expect(cancelCount, 2);
+        debugDefaultTargetPlatformOverride = null;
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockStreamHandler(eventChannel, null);
+      });
+
       testWidgets('shares change events on $platform', (tester) async {
         debugDefaultTargetPlatformOverride = platform;
         late MockStreamHandlerEventSink eventSink;
