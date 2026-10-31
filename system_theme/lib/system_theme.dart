@@ -86,6 +86,10 @@ class SystemTheme {
 
   /// Get the system accent color.
   ///
+  /// The color is available immediately with [fallbackColor]. Reading this
+  /// property does not perform platform I/O; call [SystemAccentColor.load] to
+  /// fetch the system color.
+  ///
   /// This is available for the following platforms:
   ///   - Windows
   ///   - Web
@@ -95,8 +99,7 @@ class SystemTheme {
   ///   - Linux
   ///
   /// It returns [kDefaultFallbackColor] for unsupported platforms
-  static final SystemAccentColor accentColor = SystemAccentColor(fallbackColor)
-    ..load();
+  static final SystemAccentColor accentColor = SystemAccentColor(fallbackColor);
 
   /// A stream of [SystemAccentColor] that notifies when the system accent color
   /// changes.
@@ -127,6 +130,7 @@ class SystemTheme {
 /// [SystemAccentColor.load] fails
 class SystemAccentColor {
   StreamSubscription<SystemAccentColor>? _subscription;
+  Future<void>? _loadFuture;
 
   /// The accent color used when the others are not available.
   final Color defaultAccentColor;
@@ -167,8 +171,16 @@ class SystemAccentColor {
     _retrieveFromColors(colors);
   }
 
-  /// Updates the fetched accent colors on Windows.
-  Future<void> load() async {
+  /// Fetches the system accent colors.
+  ///
+  /// Concurrent calls share the same operation. Errors from this explicit
+  /// operation are propagated to its callers, except [MissingPluginException],
+  /// which leaves this color set to its fallback.
+  Future<void> load() {
+    return _loadFuture ??= _load().whenComplete(() => _loadFuture = null);
+  }
+
+  Future<void> _load() async {
     WidgetsFlutterBinding.ensureInitialized();
 
     try {

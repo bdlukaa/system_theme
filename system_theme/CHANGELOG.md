@@ -1,6 +1,7 @@
 ## [next]
 
 * Fix `SystemTheme.onChange` so multiple simultaneous listeners do not interfere with each other.
+* Fix unsafe asynchronous initialization of `SystemTheme.accentColor`.
 
 ## [3.3.0] - [26/05/2026]
 

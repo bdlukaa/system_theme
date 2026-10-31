@@ -58,6 +58,44 @@ void main() {
   });
 
   group('SystemTheme', () {
+    test('Reading accentColor does not perform platform I/O', () {
+      expect(SystemTheme.accentColor.accent, SystemTheme.fallbackColor);
+      expect(log, isEmpty);
+    });
+
+    test('Concurrent initialization shares one operation', () async {
+      final color = SystemTheme.accentColor;
+      await Future.wait([color.load(), color.load()]);
+
+      expect(log, hasLength(1));
+      expect(color.accent, const Color(0xFF0000FF));
+    });
+
+    test('Explicit platform failures are propagated', () async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (methodCall) async {
+            throw PlatformException(code: 'failure');
+          });
+
+      await expectLater(
+        SystemTheme.accentColor.load(),
+        throwsA(isA<PlatformException>()),
+      );
+    });
+
+    test('Unsupported platforms retain the fallback color', () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (methodCall) async {
+            throw MissingPluginException();
+          });
+      final color = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
+
+      await color.load();
+
+      expect(color.accent, SystemTheme.kDefaultFallbackColor);
+    });
+
     for (final platform in [TargetPlatform.windows, TargetPlatform.macOS]) {
       testWidgets('shares change events on $platform', (tester) async {
         debugDefaultTargetPlatformOverride = platform;
