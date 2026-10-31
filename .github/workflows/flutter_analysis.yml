@@ -35,3 +35,24 @@ jobs:
 
       - name: Run tests
         run: flutter test
+
+  system-theme-web-chrome-tests:
+    name: system_theme_web Chrome tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./system_theme_web
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v2.8.0
+        with:
+          channel: "stable"
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run Chrome tests
+        run: flutter test --platform chrome

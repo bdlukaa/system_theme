@@ -1,4 +1,5 @@
 #include "include/system_theme/system_theme_plugin.h"
+#include "accent_color.h"
 
 #include <flutter_linux/flutter_linux.h>
 #include <gtk/gtk.h>
@@ -19,16 +20,22 @@ G_DEFINE_TYPE(SystemThemePlugin, system_theme_plugin, g_object_get_type())
 
 
 static FlValue *get_accent_color(GtkWidget *widget) {
-	GdkRGBA accentColor;
+	GdkRGBA accent_color = {};
+	SystemThemeColor color;
 	GtkStyleContext *context = gtk_widget_get_style_context(widget);
-	gtk_style_context_lookup_color(context, "theme_selected_bg_color", &accentColor);
+	if (!system_theme_rgba_to_color(
+			gtk_style_context_lookup_color(
+				context, "theme_selected_bg_color", &accent_color),
+			accent_color.red, accent_color.green, accent_color.blue,
+			accent_color.alpha, &color)) {
+		return nullptr;
+	}
 
 	FlValue *map = fl_value_new_map();
-
-	fl_value_set_string_take(map, "R", fl_value_new_int((int) (accentColor.red * 255)));
-	fl_value_set_string_take(map, "G", fl_value_new_int((int) (accentColor.green * 255)));
-	fl_value_set_string_take(map, "B", fl_value_new_int((int) (accentColor.blue * 255)));
-	fl_value_set_string_take(map, "A", fl_value_new_int((int) (accentColor.alpha * 255)));
+	fl_value_set_string_take(map, "R", fl_value_new_int(color.red));
+	fl_value_set_string_take(map, "G", fl_value_new_int(color.green));
+	fl_value_set_string_take(map, "B", fl_value_new_int(color.blue));
+	fl_value_set_string_take(map, "A", fl_value_new_int(color.alpha));
 
 	return map;
 }
@@ -45,12 +52,13 @@ static void system_theme_plugin_handle_method_call(
 	if (strcmp(method, "SystemTheme.accentColor") == 0) {
 		FlView *view = fl_plugin_registrar_get_view(self->registrar);
 		FlValue *accentColor = get_accent_color(GTK_WIDGET(view));
-		g_autoptr(FlValue) colors = fl_value_new_map();
-
-		fl_value_set_string_take(colors, "accent", accentColor);
-		// other colors here...
-
-		response = FL_METHOD_RESPONSE(fl_method_success_response_new(colors));
+		if (accentColor == nullptr) {
+			response = FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+		} else {
+			g_autoptr(FlValue) colors = fl_value_new_map();
+			fl_value_set_string_take(colors, "accent", accentColor);
+			response = FL_METHOD_RESPONSE(fl_method_success_response_new(colors));
+		}
 
 	} else {
 		response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());

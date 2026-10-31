@@ -108,6 +108,8 @@ call `load()` to refresh it.
 
 ## Contribution
 
+See [native testing](NATIVE_TESTING.md) for platform test commands and manual verification steps.
+
 Feel free to [open an issue](https://github.com/bdlukaa/system_theme/issues/new) if you find an error or [make pull requests](https://github.com/bdlukaa/system_theme/pulls).
 
 ### Acknowlegments

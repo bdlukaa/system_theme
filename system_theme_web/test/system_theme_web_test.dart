@@ -3,6 +3,7 @@ import 'dart:js_interop';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:system_theme_web/system_theme_web.dart';
 import 'package:web/web.dart' as web;
 
@@ -30,6 +31,11 @@ void main() {
       '#aabbccdd': {'R': 170, 'G': 187, 'B': 204, 'A': 221},
       'rgb(10, 20, 30)': {'R': 10, 'G': 20, 'B': 30, 'A': 255},
       'rgba(10, 20, 30, 0.5)': {'R': 10, 'G': 20, 'B': 30, 'A': 128},
+      'rgba(10, 20, 30, 1)': {'R': 10, 'G': 20, 'B': 30, 'A': 255},
+      'rgba(10, 20, 30, 0)': {'R': 10, 'G': 20, 'B': 30, 'A': 0},
+      'rgb(10 20 30 / 100%)': {'R': 10, 'G': 20, 'B': 30, 'A': 255},
+      '#0000': {'R': 0, 'G': 0, 'B': 0, 'A': 0},
+      '#FFFFFFFF': {'R': 255, 'G': 255, 'B': 255, 'A': 255},
       'rgb(10 20 30)': {'R': 10, 'G': 20, 'B': 30, 'A': 255},
       'rgb(10 20 30 / 50%)': {'R': 10, 'G': 20, 'B': 30, 'A': 128},
       '  rgb( 10  20  30 / 0 )  ': {'R': 10, 'G': 20, 'B': 30, 'A': 0},
@@ -158,14 +164,129 @@ void main() {
     });
   }
 
+  test('reads a controlled color through the browser computed-style API',
+      () async {
+    final body = web.document.body!;
+    final bodyStyle = body.getAttribute('style');
+    final childCount = body.children.length;
+    final originalComputedStyle = _getComputedStyle;
+    final originalSupports = _cssSupports;
+    web.HTMLElement? probe;
+    try {
+      _cssSupports = ((JSString property, JSString value) => true.toJS).toJS;
+      _getComputedStyle = ((JSAny? element) {
+        probe = element! as web.HTMLElement;
+        expect(probe!.isConnected, isTrue);
+        probe!.style.setProperty('background-color', 'rgba(8, 16, 32, 0.5)');
+        return originalComputedStyle.callAsFunction(web.window, element);
+      }).toJS;
+
+      expect(await plugin.handleMethodCall(call), {
+        'accent': {'R': 8, 'G': 16, 'B': 32, 'A': 128},
+      });
+      expect(probe, isNotNull);
+      expect(probe!.isConnected, isFalse);
+      expect(body.children.length, childCount);
+      expect(body.getAttribute('style'), bodyStyle);
+    } finally {
+      _getComputedStyle = originalComputedStyle;
+      _cssSupports = originalSupports;
+    }
+  });
+
+  test('cleans up the probe when computed styles throw', () async {
+    final body = web.document.body!;
+    final bodyStyle = body.getAttribute('style');
+    final childCount = body.children.length;
+    final originalComputedStyle = _getComputedStyle;
+    final originalSupports = _cssSupports;
+    web.HTMLElement? probe;
+    try {
+      _cssSupports = ((JSString property, JSString value) => true.toJS).toJS;
+      JSAny? failComputedStyle(JSAny? element) {
+        probe = element! as web.HTMLElement;
+        throw StateError('computed style unavailable');
+      }
+
+      _getComputedStyle = failComputedStyle.toJS;
+      expect(await plugin.handleMethodCall(call), isNull);
+      expect(probe, isNotNull);
+      expect(probe!.isConnected, isFalse);
+      expect(body.children.length, childCount);
+      expect(body.getAttribute('style'), bodyStyle);
+    } finally {
+      _getComputedStyle = originalComputedStyle;
+      _cssSupports = originalSupports;
+    }
+  });
+
+  test('returns null when CSS feature detection throws', () async {
+    final originalSupports = _cssSupports;
+    try {
+      JSBoolean failSupports(JSString property, JSString value) {
+        throw StateError('CSS.supports unavailable');
+      }
+
+      _cssSupports = failSupports.toJS;
+      expect(await plugin.handleMethodCall(call), isNull);
+    } finally {
+      _cssSupports = originalSupports;
+    }
+  });
+
+  test('registers the method channel and returns encoded responses', () async {
+    final registrar = Registrar();
+    SystemThemeWeb.registerWith(registrar);
+    const codec = StandardMethodCodec();
+    final originalComputedStyle = _getComputedStyle;
+    final originalSupports = _cssSupports;
+    try {
+      _cssSupports = ((JSString property, JSString value) => true.toJS).toJS;
+      _getComputedStyle = ((JSAny? element) =>
+          {'backgroundColor': 'rgb(8, 16, 32)'}.jsify()).toJS;
+      Object? response;
+      await registrar.handleFrameworkMessage(
+        'system_theme',
+        codec.encodeMethodCall(call),
+        (data) => response = codec.decodeEnvelope(data!),
+      );
+      expect(response, {
+        'accent': {'R': 8, 'G': 16, 'B': 32, 'A': 255},
+      });
+
+      _getComputedStyle =
+          ((JSAny? element) => {'backgroundColor': 'unsupported'}.jsify()).toJS;
+      await registrar.handleFrameworkMessage(
+        'system_theme',
+        codec.encodeMethodCall(call),
+        (data) => response = codec.decodeEnvelope(data!),
+      );
+      expect(response, isNull);
+
+      await expectLater(
+        registrar.handleFrameworkMessage(
+          'system_theme',
+          codec.encodeMethodCall(const MethodCall('unsupportedMethod')),
+          (data) => codec.decodeEnvelope(data!),
+        ),
+        throwsA(isA<PlatformException>()
+            .having((error) => error.code, 'code', 'Unimplemented')),
+      );
+    } finally {
+      _getComputedStyle = originalComputedStyle;
+      _cssSupports = originalSupports;
+    }
+  });
+
   test('returns null when the document has no body', () async {
     final body = web.document.body!;
     final parent = body.parentNode!;
     final nextSibling = body.nextSibling;
     body.remove();
-    final result = plugin.handleMethodCall(call);
-    parent.insertBefore(body, nextSibling);
-
-    expect(await result, isNull);
+    try {
+      expect(await plugin.handleMethodCall(call), isNull);
+    } finally {
+      parent.insertBefore(body, nextSibling);
+    }
   });
 }

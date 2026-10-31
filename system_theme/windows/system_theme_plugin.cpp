@@ -7,6 +7,7 @@
 #include <flutter/standard_method_codec.h>
 
 #include "Windows10Colors/Windows10Colors.cpp"
+#include "theme_change_message.h"
 
 #include <mutex>
 
@@ -58,7 +59,7 @@ namespace
         std::unique_ptr<flutter::StreamHandlerError<T>> OnCancelInternal(const T *arguments) override
         {
             std::unique_lock<std::mutex> _ul(m_mtx);
-            m_sink.release();
+            m_sink.reset();
             return nullptr;
         }
 
@@ -74,7 +75,7 @@ namespace
         static MyStreamHandler<> *RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar);
         SystemThemePlugin(flutter::PluginRegistrarWindows *registrar);
 
-        MyStreamHandler<> *m_handler;
+        MyStreamHandler<> *m_handler = nullptr;
 
         virtual ~SystemThemePlugin();
 
@@ -82,13 +83,13 @@ namespace
         flutter::PluginRegistrarWindows *registrar;
         void HandleMethodCall(const flutter::MethodCall<flutter::EncodableValue> &method_call, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
         std::unique_ptr<flutter::EventChannel<flutter::EncodableValue>> m_event_channel;
+        int m_window_proc_id = -1;
         std::optional<LRESULT> HandleWindowProc(HWND hWnd,
                                                 UINT message,
                                                 WPARAM wParam,
                                                 LPARAM lParam);
     };
 
-    int window_proc_id = -1;
     MyStreamHandler<> *SystemThemePlugin::RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar)
     {
         auto channel = std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(registrar->messenger(), "system_theme", &flutter::StandardMethodCodec::GetInstance());
@@ -120,7 +121,7 @@ namespace
         flutter::PluginRegistrarWindows *registrar)
         : registrar(registrar)
     {
-        window_proc_id = registrar->RegisterTopLevelWindowProcDelegate(
+        m_window_proc_id = registrar->RegisterTopLevelWindowProcDelegate(
             [this](HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             {
                 return HandleWindowProc(hWnd, message, wParam, lParam);
@@ -130,7 +131,7 @@ namespace
 
     SystemThemePlugin::~SystemThemePlugin()
     {
-        registrar->UnregisterTopLevelWindowProcDelegate(window_proc_id);
+        registrar->UnregisterTopLevelWindowProcDelegate(m_window_proc_id);
     }
 
     flutter::EncodableMap getAccentColor()
@@ -155,36 +156,25 @@ namespace
         return colors;
     }
 
-    MyStreamHandler<> *_m_handler = nullptr;
     std::optional<LRESULT> SystemThemePlugin::HandleWindowProc(HWND hWnd,
                                                                UINT iMessage,
                                                                WPARAM wParam,
                                                                LPARAM lParam)
     {
-        std::optional<LRESULT> result = std::nullopt;
-        if (iMessage == WM_SETTINGCHANGE)
+        if (!system_theme::IsImmersiveColorSetChange(iMessage, lParam))
         {
-            OutputDebugString(L"****** SYSTEM_THEME_PLUGIN ******: WM_SETTINGCHANGE called");
-            if (!lstrcmp(LPCTSTR(lParam), L"ImmersiveColorSet"))
-            {
-                if (_m_handler != nullptr)
-                {
-                    OutputDebugString(L"- Theme Has Changed\n");
-                    _m_handler->on_callback(getAccentColor());
-                    return true;
-                }
-                else
-                {
-                    OutputDebugString(L" - _m_handler is null\n");
-                }
-            }
-            else
-            {
-                OutputDebugString(L"\n");
-            }
+            return std::nullopt;
         }
 
-        return result;
+        OutputDebugString(L"****** SYSTEM_THEME_PLUGIN ******: WM_SETTINGCHANGE called");
+        if (m_handler == nullptr)
+        {
+            return std::nullopt;
+        }
+
+        m_handler->on_callback(getAccentColor());
+        OutputDebugString(L"- Theme Has Changed\n");
+        return true;
     }
 
     void SystemThemePlugin::HandleMethodCall(const flutter::MethodCall<flutter::EncodableValue> &method_call, std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result)
@@ -203,6 +193,6 @@ namespace
 
 void SystemThemePluginRegisterWithRegistrar(FlutterDesktopPluginRegistrarRef registrar)
 {
-    _m_handler = SystemThemePlugin::RegisterWithRegistrar(
+    SystemThemePlugin::RegisterWithRegistrar(
         flutter::PluginRegistrarManager::GetInstance()->GetRegistrar<flutter::PluginRegistrarWindows>(registrar));
 }

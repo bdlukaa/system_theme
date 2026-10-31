@@ -29,6 +29,11 @@ jobs:
         run: flutter pub get
       - name: Build for Windows
         run: flutter build windows --verbose
+      - name: Run Windows native tests
+        run: |
+          cmake -S ../windows/test -B build/native-windows-tests
+          cmake --build build/native-windows-tests --config Debug
+          ctest --test-dir build/native-windows-tests -C Debug --output-on-failure
 
   build_android:
     name: Android Client
@@ -49,6 +54,8 @@ jobs:
       - run: flutter pub get
       - run: flutter build apk --verbose --split-per-abi
       - run: flutter build appbundle --verbose
+      - name: Run Android native tests
+        run: cd android && ./gradlew :system_theme:testDebugUnitTest
 
   build_iOS:
     name: iOS Client
@@ -73,6 +80,10 @@ jobs:
       - run: flutter pub get
       - run: flutter build ios --verbose --release --no-codesign
       - run: flutter build ipa --verbose --release --no-codesign
+      - name: Run iOS native tests
+        run: |
+          DEVICE_ID=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; data=json.load(sys.stdin); print(next(device["udid"] for runtime, devices in data["devices"].items() if "iOS" in runtime for device in devices if device["name"].startswith("iPhone")))')
+          xcodebuild -project ios/Runner.xcodeproj -scheme Runner -destination "platform=iOS Simulator,id=$DEVICE_ID" IPHONEOS_DEPLOYMENT_TARGET=15.0 test
 
   build_macOS:
     name: macOS Client
@@ -96,6 +107,8 @@ jobs:
       - run: flutter config --enable-swift-package-manager
       - run: flutter pub get
       - run: flutter build macos
+      - name: Run macOS native tests
+        run: xcodebuild -project macos/Runner.xcodeproj -scheme Runner -destination 'platform=macOS' MACOSX_DEPLOYMENT_TARGET=12.0 test
 
   build_linux:
     name: Linux Client
@@ -119,6 +132,11 @@ jobs:
           cache: true
       - run: flutter pub get
       - run: flutter build linux --verbose
+      - name: Run Linux native tests
+        run: |
+          cmake -S ../linux/test -B build/native-linux-tests
+          cmake --build build/native-linux-tests
+          ctest --test-dir build/native-linux-tests --output-on-failure
 
   build_web:
     name: Web Client

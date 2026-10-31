@@ -1,0 +1,3 @@
+<manifest xmlns:tools="http://schemas.android.com/tools">
+  <uses-sdk tools:overrideLibrary="androidx.activity,androidx.annotation.experimental,androidx.arch.core.common,androidx.arch.core.runtime,androidx.core,androidx.core.ktx,androidx.exifinterface,androidx.fragment,androidx.lifecycle,androidx.lifecycle.livedata,androidx.lifecycle.livedata.core,androidx.lifecycle.livedata.core.ktx,androidx.lifecycle.process,androidx.lifecycle.runtime,androidx.lifecycle.viewmodel,androidx.lifecycle.viewmodel.savedstate,androidx.profileinstaller,androidx.savedstate,androidx.window,androidx.window.java" />
+</manifest>

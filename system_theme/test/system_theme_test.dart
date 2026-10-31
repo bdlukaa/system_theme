@@ -489,22 +489,33 @@ void main() {
         expect(receivedByFirst, hasLength(1));
         expect(receivedBySecond, receivedByFirst);
 
-        await first.cancel();
+        first.cancel();
+        await tester.pump();
         expect(cancelCount, 0);
         eventSink.success({'accent': createColorMap(r: 4, g: 5, b: 6)});
         await tester.pump();
         expect(receivedByFirst, hasLength(1));
         expect(receivedBySecond, hasLength(2));
+        expect(receivedBySecond.last.accent, const Color(0xFF040506));
+        eventSink.success({'accent': createColorMap(r: 4, g: 5, b: 6)});
+        await tester.pump();
+        expect(receivedBySecond, hasLength(2));
 
-        await second.cancel();
+        second.cancel();
         await tester.pump();
         expect(cancelCount, 1);
 
         final third = SystemTheme.onChange.listen(receivedByFirst.add);
         await tester.pump();
         expect(listenCount, 2);
-        await third.cancel();
+        eventSink.success({'accent': createColorMap(r: 7, g: 8, b: 9)});
         await tester.pump();
+        expect(receivedByFirst, hasLength(2));
+        expect(receivedByFirst.last.accent, const Color(0xFF070809));
+        third.cancel();
+        await tester.pump();
+        expect(cancelCount, 2);
+        debugDefaultTargetPlatformOverride = null;
 
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockStreamHandler(eventChannel, null);
@@ -513,47 +524,71 @@ void main() {
       testWidgets('multiple builders rebuild on $platform', (tester) async {
         debugDefaultTargetPlatformOverride = platform;
         late MockStreamHandlerEventSink eventSink;
+        var listenCount = 0;
+        var cancelCount = 0;
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockStreamHandler(
               eventChannel,
               MockStreamHandler.inline(
-                onListen: (arguments, sink) => eventSink = sink,
-                onCancel: (arguments) {},
+                onListen: (arguments, sink) {
+                  listenCount++;
+                  eventSink = sink;
+                },
+                onCancel: (arguments) => cancelCount++,
               ),
             );
-        var firstBuilds = 0;
-        var secondBuilds = 0;
+        final firstColors = <Color>[];
+        final secondColors = <Color>[];
 
-        await tester.pumpWidget(
-          Directionality(
-            textDirection: TextDirection.ltr,
-            child: Column(
-              children: [
+        Widget builders({required bool showFirst}) => Directionality(
+          textDirection: TextDirection.ltr,
+          child: Column(
+            children: [
+              if (showFirst)
                 SystemThemeBuilder(
+                  key: const ValueKey('first'),
                   builder: (context, color) {
-                    firstBuilds++;
+                    firstColors.add(color.accent);
                     return const SizedBox();
                   },
                 ),
-                SystemThemeBuilder(
-                  builder: (context, color) {
-                    secondBuilds++;
-                    return const SizedBox();
-                  },
-                ),
-              ],
-            ),
+              SystemThemeBuilder(
+                key: const ValueKey('second'),
+                builder: (context, color) {
+                  secondColors.add(color.accent);
+                  return const SizedBox();
+                },
+              ),
+            ],
           ),
         );
+
+        await tester.pumpWidget(builders(showFirst: true));
         await tester.pump();
-        final initialFirstBuilds = firstBuilds;
-        final initialSecondBuilds = secondBuilds;
+        expect(listenCount, 1);
+        final initialFirstBuilds = firstColors.length;
+        final initialSecondBuilds = secondColors.length;
         eventSink.success({'accent': createColorMap(r: 1, g: 2, b: 3)});
         await tester.pump();
-        expect(firstBuilds, greaterThan(initialFirstBuilds));
-        expect(secondBuilds, greaterThan(initialSecondBuilds));
+        await tester.pump();
+        expect(firstColors.length, greaterThan(initialFirstBuilds));
+        expect(secondColors.length, greaterThan(initialSecondBuilds));
+        expect(firstColors.last, const Color(0xFF010203));
+        expect(secondColors.last, const Color(0xFF010203));
+
+        await tester.pumpWidget(builders(showFirst: false));
+        expect(cancelCount, 0);
+        final firstBuildsAfterRemoval = firstColors.length;
+        eventSink.success({'accent': createColorMap(r: 4, g: 5, b: 6)});
+        await tester.pump();
+        await tester.pump();
+        expect(firstColors, hasLength(firstBuildsAfterRemoval));
+        expect(secondColors.last, const Color(0xFF040506));
 
         await tester.pumpWidget(const SizedBox());
+        await tester.pump();
+        expect(cancelCount, 1);
+        debugDefaultTargetPlatformOverride = null;
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockStreamHandler(eventChannel, null);
       });

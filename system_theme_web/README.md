@@ -2,6 +2,15 @@
 
 [system_theme](https://pub.dev/packages/system_theme) implementation for the web.
 
+## Testing
+
+From the `system_theme_web` directory:
+
+```sh
+flutter pub get
+flutter test --platform chrome
+```
+
 ## Browser accent colors
 
 The web plugin reads the browser's CSS [`AccentColor`](https://developer.mozilla.org/en-US/docs/Web/CSS/system-color) system color, with `accent-color: auto`, when the browser supports it. This represents the browser's accent for UI controls, **not a guaranteed native OS accent color**. The CSS `Highlight` color is for selections and is not used as an accent fallback.

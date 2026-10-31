@@ -16,6 +16,7 @@ set(PLUGIN_NAME "system_theme_plugin")
 #
 # Any new source files that you add to the plugin should be added here.
 add_library(${PLUGIN_NAME} SHARED
+  "accent_color.cc"
   "system_theme_plugin.cc"
 )
 
