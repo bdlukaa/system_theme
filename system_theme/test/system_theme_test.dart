@@ -26,6 +26,7 @@ void main() {
 
   void resetSingleton() {
     final color = SystemTheme.accentColor;
+    color.dispose();
     color.accent = SystemTheme.kDefaultFallbackColor;
     color.light = SystemTheme.kDefaultFallbackColor;
     color.lighter = SystemTheme.kDefaultFallbackColor;
@@ -110,6 +111,7 @@ void main() {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (methodCall) async => null);
       final color = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
+      addTearDown(color.dispose);
 
       await color.load();
 
@@ -135,6 +137,7 @@ void main() {
             throw PlatformException(code: 'refresh-failed');
           });
       final color = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
+      addTearDown(color.dispose);
       await color.load();
       final palette = [
         color.accent,
@@ -163,6 +166,7 @@ void main() {
       'Malformed or incomplete responses preserve the current palette',
       () async {
         final color = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
+        addTearDown(color.dispose);
         final previousAccent = color.accent;
         final previousLight = color.light;
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
@@ -212,6 +216,7 @@ void main() {
             };
           });
       final color = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
+      addTearDown(color.dispose);
 
       await color.load();
       await color.load();
@@ -240,6 +245,7 @@ void main() {
 
     test('A later load performs a fresh platform request', () async {
       final color = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
+      addTearDown(color.dispose);
       await color.load();
       await color.load();
 
@@ -255,6 +261,7 @@ void main() {
             return {'accent': createColorMap(r: 9, g: 8, b: 7)};
           });
       final color = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
+      addTearDown(color.dispose);
 
       final firstLoad = color.load();
       final secondLoad = color.load();
@@ -271,6 +278,7 @@ void main() {
 
     test('Failed palette parsing does not partially update colors', () async {
       final color = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
+      addTearDown(color.dispose);
       final previousAccent = color.accent;
       final previousLight = color.light;
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
@@ -306,6 +314,7 @@ void main() {
             throw MissingPluginException();
           });
       final color = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
+      addTearDown(color.dispose);
 
       await color.load();
 
@@ -315,7 +324,7 @@ void main() {
     testWidgets(
       'explicit reload updates both builders without duplicate updates',
       (tester) async {
-        debugDefaultTargetPlatformOverride = TargetPlatform.android;
+        debugDefaultTargetPlatformOverride = TargetPlatform.linux;
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(channel, (methodCall) async {
               return {'accent': createColorMap(r: 12, g: 34, b: 56)};
@@ -367,7 +376,11 @@ void main() {
       },
     );
 
-    for (final platform in [TargetPlatform.windows, TargetPlatform.macOS]) {
+    for (final platform in [
+      TargetPlatform.windows,
+      TargetPlatform.macOS,
+      TargetPlatform.android,
+    ]) {
       testWidgets('native events and reloads are deduplicated on $platform', (
         tester,
       ) async {
@@ -602,17 +615,25 @@ void main() {
     });
 
     test('Check platform support for listening to changes', () {
-      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
-      expect(
-        defaultTargetPlatform.supportsListeningToAccentColorChanges,
-        isTrue,
-      );
+      for (final platform in [
+        TargetPlatform.windows,
+        TargetPlatform.macOS,
+        TargetPlatform.android,
+      ]) {
+        debugDefaultTargetPlatformOverride = platform;
+        expect(
+          defaultTargetPlatform.supportsListeningToAccentColorChanges,
+          isTrue,
+        );
+      }
 
-      debugDefaultTargetPlatformOverride = TargetPlatform.android;
-      expect(
-        defaultTargetPlatform.supportsListeningToAccentColorChanges,
-        isFalse,
-      );
+      for (final platform in [TargetPlatform.linux, TargetPlatform.iOS]) {
+        debugDefaultTargetPlatformOverride = platform;
+        expect(
+          defaultTargetPlatform.supportsListeningToAccentColorChanges,
+          isFalse,
+        );
+      }
     });
 
     test('Loads accent color correctly (Singleton)', () async {
@@ -631,6 +652,7 @@ void main() {
           });
 
       final testTheme = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
+      addTearDown(testTheme.dispose);
 
       await testTheme.load();
 
@@ -646,6 +668,7 @@ void main() {
           });
 
       final testTheme = SystemAccentColor(customFallback);
+      addTearDown(testTheme.dispose);
 
       await testTheme.load();
 
@@ -663,6 +686,7 @@ void main() {
           });
 
       final testTheme = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
+      addTearDown(testTheme.dispose);
       await testTheme.load();
 
       expect(testTheme.accent, const Color(0xFF0000FF));
@@ -684,6 +708,7 @@ void main() {
           });
 
       final testTheme = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
+      addTearDown(testTheme.dispose);
       await testTheme.load();
 
       expect(testTheme.light, platformLightColor);
@@ -698,6 +723,7 @@ void main() {
           });
 
       final testTheme = SystemAccentColor(SystemTheme.kDefaultFallbackColor);
+      addTearDown(testTheme.dispose);
       await testTheme.load();
 
       expect(testTheme.light, testTheme.accent);
