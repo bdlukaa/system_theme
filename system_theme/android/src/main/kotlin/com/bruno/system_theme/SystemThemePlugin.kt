@@ -1,54 +1,93 @@
 package com.bruno.system_theme
 
 import android.R
+import android.content.ComponentCallbacks
 import android.content.Context
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
 import android.util.TypedValue
 import android.view.ContextThemeWrapper
 import androidx.annotation.NonNull
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 
-class SystemThemePlugin: FlutterPlugin, MethodCallHandler {
+class SystemThemePlugin: FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler {
   private var channel: MethodChannel? = null
+  private var eventChannel: EventChannel? = null
+  private var eventSink: EventChannel.EventSink? = null
   private var applicationContext: Context? = null
+  private var registeredCallbacksContext: Context? = null
+
+  private val componentCallbacks = object : ComponentCallbacks {
+    override fun onConfigurationChanged(newConfig: Configuration) {
+      val context = registeredCallbacksContext ?: applicationContext ?: return
+      val colors = getAccentColorMap(context) ?: return
+      eventSink?.success(colors)
+    }
+
+    override fun onLowMemory() {}
+  }
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     applicationContext = flutterPluginBinding.applicationContext
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "system_theme")
     channel?.setMethodCallHandler(this)
+    eventChannel = EventChannel(
+      flutterPluginBinding.binaryMessenger,
+      "system_theme_events/switch_callback"
+    )
+    eventChannel?.setStreamHandler(this)
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
     when (call.method) {
         "SystemTheme.accentColor" -> {
           val context = applicationContext
-          val color = context?.let { getDeviceAccentColor(it) }
-          if (color == null) {
-            result.success(null)
-            return
-          }
-          val r = (color shr 16) and 0xFF
-          val g = (color shr 8) and 0xFF
-          val b = color and 0xFF
-          // val a = (color shr 24) and 0xFF 
-
-          result.success(hashMapOf<String, Any?>(
-              "accent" to hashMapOf<String, Any?>(
-                  "R" to r,
-                  "G" to g,
-                  "B" to b,
-                  "A" to 255
-              )
-          ))
+          result.success(context?.let { getAccentColorMap(it) })
         }
         else -> {
           result.notImplemented()
         }
     }
+  }
+
+  override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+    unregisterComponentCallbacks()
+    eventSink = events
+    val context = applicationContext ?: return
+    context.registerComponentCallbacks(componentCallbacks)
+    registeredCallbacksContext = context
+  }
+
+  override fun onCancel(arguments: Any?) {
+    unregisterComponentCallbacks()
+    eventSink = null
+  }
+
+  private fun unregisterComponentCallbacks() {
+    registeredCallbacksContext?.unregisterComponentCallbacks(componentCallbacks)
+    registeredCallbacksContext = null
+  }
+
+  private fun getAccentColorMap(context: Context): HashMap<String, Any?>? {
+    val color = getDeviceAccentColor(context) ?: return null
+    val r = (color shr 16) and 0xFF
+    val g = (color shr 8) and 0xFF
+    val b = color and 0xFF
+    // val a = (color shr 24) and 0xFF
+
+    return hashMapOf(
+      "accent" to hashMapOf<String, Any?>(
+        "R" to r,
+        "G" to g,
+        "B" to b,
+        "A" to 255
+      )
+    )
   }
 
   private fun getDeviceAccentColor(context: Context) : Int? {
@@ -82,6 +121,10 @@ class SystemThemePlugin: FlutterPlugin, MethodCallHandler {
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    unregisterComponentCallbacks()
+    eventSink = null
+    eventChannel?.setStreamHandler(null)
+    eventChannel = null
     channel?.setMethodCallHandler(null)
     channel = null
     applicationContext = null

@@ -17,11 +17,11 @@
 
 | Platform    | Accent Color | Listen to Color Changes | Minimum Version     |
 | :---------- | :----------: | :---------------------: | :------------------ |
-| **Android** |      ✔️      |                         | Android 10+         |
+| **Android** |      ✔️      |           ✔️            | Android 10+         |
 | **iOS**     |      ✔️      |                         | iOS 14+             |
 | **Windows** |      ✔️      |           ✔️            | Windows 10+         |
 | **macOS**   |      ✔️      |           ✔️            | Mojave 10.14+       |
-| **Linux**   |      ✔️      |                         | GTK 3+              |
+| **Linux**   |      ✔️      |           ✔️            | GTK 3+              |
 | **Web**     |      ✔️      |                         | All modern browsers |
 
 ## Usage

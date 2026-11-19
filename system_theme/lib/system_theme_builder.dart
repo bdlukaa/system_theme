@@ -5,8 +5,8 @@ typedef ThemeWidgetBuilder =
     Widget Function(BuildContext context, SystemAccentColor accent);
 
 /// A widget that rebuilds when [SystemTheme.onChange] emits a new accent
-/// palette. Windows and macOS emit automatic native changes; other platforms
-/// update after an explicit [SystemAccentColor.load] call.
+/// palette. Windows, macOS, Android, and Linux emit automatic native changes;
+/// other platforms update after an explicit [SystemAccentColor.load] call.
 ///
 /// ```dart
 /// SystemThemeBuilder(builder: (context, color) {

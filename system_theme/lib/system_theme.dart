@@ -24,7 +24,13 @@ extension PlatformHelpers on TargetPlatform {
 
   /// Whether this platform supports listening to accent color changes.
   bool get supportsListeningToAccentColorChanges =>
-      !kIsWeb && [TargetPlatform.windows, TargetPlatform.macOS].contains(this);
+      !kIsWeb &&
+      [
+        TargetPlatform.windows,
+        TargetPlatform.macOS,
+        TargetPlatform.android,
+        TargetPlatform.linux,
+      ].contains(this);
 }
 
 /// Class to return current system theme state on Windows.
@@ -35,8 +41,8 @@ extension PlatformHelpers on TargetPlatform {
 /// [fallbackColor] to the desired color
 ///
 /// [onChange] emits explicit [SystemAccentColor.load] changes on all platforms.
-/// Windows and macOS also emit automatic native theme-change notifications;
-/// other platforms do not detect OS changes automatically.
+/// Windows, macOS, Android, and Linux also emit automatic native theme-change
+/// notifications; other platforms do not detect OS changes automatically.
 class SystemTheme {
   /// Platform channel handler for invoking native methods.
   static const MethodChannel _channel = MethodChannel('system_theme');
@@ -132,9 +138,9 @@ class SystemTheme {
   ///
   /// On platforms without native listeners, each subscription first receives
   /// the current palette, followed by changes from successful explicit
-  /// [SystemAccentColor.load] calls. Windows and macOS report native theme
-  /// changes automatically and also emit changes from explicit loads. Other
-  /// platforms do not detect OS changes automatically.
+  /// [SystemAccentColor.load] calls. Windows, macOS, Android, and Linux report
+  /// native theme changes automatically and also emit changes from explicit
+  /// loads. Other platforms do not detect OS changes automatically.
   ///
   /// Basica usage:
   ///

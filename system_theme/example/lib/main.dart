@@ -1,27 +1,29 @@
+// ignore_for_file: avoid_print
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:system_theme/system_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemTheme.accentColor.load();
   SystemTheme.onChange.listen((color) {
-    debugPrint('Accent color changed to ${color.accent}');
+    debugPrint('------------------ Accent color changed to ${color.accent}');
   });
-
+  print('------------------ main restarted');
   runApp(const MaterialApp(home: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
-  _MyAppState createState() => _MyAppState();
+  State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
+    print('------------------ widget restarted');
     return SystemThemeBuilder(
       builder: (context, color) {
         final colors = [
@@ -53,16 +55,7 @@ class _MyAppState extends State<MyApp> {
                             color: color,
                             alignment: Alignment.center,
                             child: Text(
-                              [
-                                    'Lightest',
-                                    'Lighter',
-                                    'Light',
-                                    'Default',
-                                    'Dark',
-                                    'Darker',
-                                    'Darkest',
-                                  ][colors.indexOf(color)] +
-                                  '\n${color.toHex()}',
+                              '${['Lightest', 'Lighter', 'Light', 'Default', 'Dark', 'Darker', 'Darkest'][colors.indexOf(color)]}\n${color.toHex()}',
                               style: Theme.of(context).textTheme.titleLarge
                                   ?.copyWith(
                                     color: color.computeLuminance() >= 0.5
