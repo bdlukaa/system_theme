@@ -29,6 +29,7 @@ extension PlatformHelpers on TargetPlatform {
         TargetPlatform.windows,
         TargetPlatform.macOS,
         TargetPlatform.android,
+        TargetPlatform.linux,
       ].contains(this);
 }
 
@@ -40,7 +41,7 @@ extension PlatformHelpers on TargetPlatform {
 /// [fallbackColor] to the desired color
 ///
 /// [onChange] emits explicit [SystemAccentColor.load] changes on all platforms.
-/// Windows, macOS, and Android also emit automatic native theme-change
+/// Windows, macOS, Android, and Linux also emit automatic native theme-change
 /// notifications; other platforms do not detect OS changes automatically.
 class SystemTheme {
   /// Platform channel handler for invoking native methods.
@@ -137,9 +138,9 @@ class SystemTheme {
   ///
   /// On platforms without native listeners, each subscription first receives
   /// the current palette, followed by changes from successful explicit
-  /// [SystemAccentColor.load] calls. Windows, macOS, and Android report native
-  /// theme changes automatically and also emit changes from explicit loads.
-  /// Other platforms do not detect OS changes automatically.
+  /// [SystemAccentColor.load] calls. Windows, macOS, Android, and Linux report
+  /// native theme changes automatically and also emit changes from explicit
+  /// loads. Other platforms do not detect OS changes automatically.
   ///
   /// Basica usage:
   ///

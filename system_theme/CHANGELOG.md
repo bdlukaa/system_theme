@@ -10,6 +10,7 @@
 * android: Correct Material You and wallpaper-based accent colors.
 * android: Fix Android Activity lifecycle handling
 * android: Add support for listening to system accent color changes.
+* linux: Add support for listening to system accent color changes.
 
 ## [3.3.0] - [26/05/2026]
 

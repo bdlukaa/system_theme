@@ -324,7 +324,7 @@ void main() {
     testWidgets(
       'explicit reload updates both builders without duplicate updates',
       (tester) async {
-        debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(channel, (methodCall) async {
               return {'accent': createColorMap(r: 12, g: 34, b: 56)};
@@ -380,6 +380,7 @@ void main() {
       TargetPlatform.windows,
       TargetPlatform.macOS,
       TargetPlatform.android,
+      TargetPlatform.linux,
     ]) {
       testWidgets('native events and reloads are deduplicated on $platform', (
         tester,
@@ -619,6 +620,7 @@ void main() {
         TargetPlatform.windows,
         TargetPlatform.macOS,
         TargetPlatform.android,
+        TargetPlatform.linux,
       ]) {
         debugDefaultTargetPlatformOverride = platform;
         expect(
@@ -627,7 +629,7 @@ void main() {
         );
       }
 
-      for (final platform in [TargetPlatform.linux, TargetPlatform.iOS]) {
+      for (final platform in [TargetPlatform.iOS, TargetPlatform.fuchsia]) {
         debugDefaultTargetPlatformOverride = platform;
         expect(
           defaultTargetPlatform.supportsListeningToAccentColorChanges,

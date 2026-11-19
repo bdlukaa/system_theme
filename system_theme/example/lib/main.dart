@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_print
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:material_ui/material_ui.dart';
 import 'package:system_theme/system_theme.dart';
@@ -6,9 +7,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemTheme.accentColor.load();
   SystemTheme.onChange.listen((color) {
-    debugPrint('Accent color changed to ${color.accent}');
+    debugPrint('------------------ Accent color changed to ${color.accent}');
   });
-
+  print('------------------ main restarted');
   runApp(const MaterialApp(home: MyApp()));
 }
 
@@ -22,6 +23,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
+    print('------------------ widget restarted');
     return SystemThemeBuilder(
       builder: (context, color) {
         final colors = [
