@@ -51,11 +51,6 @@ jobs:
         with:
           channel: "stable"
           cache: true
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
       - run: flutter pub get
       - run: flutter build apk --verbose --split-per-abi
       - run: flutter build appbundle --verbose
